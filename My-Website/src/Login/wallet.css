@@ -1,0 +1,155 @@
+.wallet-container {
+  max-width: 800px;
+margin-top: -5%;
+}
+
+.wallet-box {
+    width: 180px;
+    height: 76px;
+    border: 1px solid #d6d4d4;
+    border-radius: 10px;
+    display: flex;
+justify-content: center;
+align-items: center;
+margin-bottom: 30px;
+
+}
+
+.wallet-balance {
+  font-size: 24px;
+  color: #d1002c;
+  font-weight: bold;
+position: relative;
+left: 25%;
+}
+
+.wallet-label {
+  font-size: 14px;
+  margin-top: 5px;
+      position: relative;
+    top: 65%;
+}
+
+.wallet-tabs span {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.active-wallet-tab {
+  border-bottom: 2px solid #d1002c;
+  color: #d1002c;
+}
+.text-w{
+text-decoration: underline;
+}
+.btn-wallet{
+  border: none;
+  padding: 6px 20px;
+  color:white;
+}
+.upload-form{
+  margin-top: -5%;
+}
+.form-amount{
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #b5b5b5;
+    outline: none;
+
+}
+  .amount1{
+color: rgb(158, 158, 158);
+    font-weight: 700;
+    font-size: 1rem
+  }  
+  .creditdebitimg{
+    height: 50px;
+    width: 50px;
+  }
+
+
+/* ============= */
+.upload-form {
+ 
+  border-radius: 8px;
+  width: 500px;
+  
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.upload-form h6 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.form-amount {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.amount1 input[type="radio"] {
+  margin-right: 5px;
+}
+
+.amount1 {
+  font-weight: 500;
+  color: #333;
+}
+
+.creditdebitimg {
+  width: 30px;
+  height: auto;
+}
+
+.upload-form input[type="text"],
+.upload-form .form-control {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  
+  background-color: #f9f9f9;
+}
+
+.upload-form input::placeholder {
+  color: #aaa;
+}
+.sub-btn {
+  background-color:#D11243;
+  border-color:#D11243;
+  font-size: 14px;
+  border: none;
+    width: 110px;
+    border: none;
+    height: 30px;
+    color: #fff;
+    border-radius: 3px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cancel-btn {
+width: 110px;
+    border: 1px solid #d6d4d4;
+    height: 30px;
+    color: gray;
+    border-radius: 3px;
+    font-weight: 700;
+      font-size: 14px;
+    cursor: pointer;
+}
+
+.payment-options {
+  gap: 20px;
+}
+
+.payment-option {
+  cursor: pointer;
+}
+
+.payment-option input[type="radio"] {
+  margin-right: 8px;
+}

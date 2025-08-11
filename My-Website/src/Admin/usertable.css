@@ -1,0 +1,31 @@
+.userh{
+  border-bottom: 1px solid #e6ecf5 ;
+  padding: 10px;
+  font-size: 20px;
+  color: #515365;
+  font-weight: 500;
+  }
+.usertable-container {
+  background-color: #ffffff;
+  width: 1200px;
+  border-radius: 10px;
+}
+.userentries{
+border-bottom: 1px solid #e6ecf5 ;
+padding: 10px;
+margin: 0px 10px;
+border-radius: 5px;
+}
+.usertable{
+padding: 10px 30px 10px 30px;
+}
+.btn-useractive{
+    background-color: #ff2e56;
+    border: none;
+    font-weight: bold;
+    padding: 0px 4px;
+    color: white;
+    position: relative;
+    /* left: 0%; */
+    top: 0px;
+}

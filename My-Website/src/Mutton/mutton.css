@@ -1,0 +1,92 @@
+.mutton-container{
+           background-color: rgb(255, 202, 202);
+padding: 10px 0px 10px 0px;
+margin-top:2px;
+  font-family: Arial, sans-serif;
+  position: static;
+}
+.muttonhead2{
+     background-color: rgb(255, 202, 202);
+}
+.muttonbanner1{
+   margin-left:3%;
+width: 92%;
+}
+.carousel-control-next-icon {
+  margin-left: -47%;
+}
+   
+.breadcrumb {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 1rem;
+  margin-left:14.5%;
+}
+.separator {
+  margin: 0 0.5rem;
+}
+.current {
+  color: #d0021b; 
+}
+.heading {
+ font-size: 25px;
+  font-weight: bold;
+color: #0d0d0e;
+    line-height: 128%;
+  margin-left: 14.5%;
+}
+.mutton{
+    text-decoration: none;
+    color: #333;
+}
+.mutton:hover{
+    color:#D11243;
+}
+.muttondiv{
+width:92%;
+}
+.mutton-cat{
+ margin-left: -36%;
+}
+.muttonimg1 {
+  width: 80px;
+  height: 100px;
+  object-fit: contain;
+  border: 2px solid transparent;
+  transition: border 0.3s;
+}
+ .partytext {
+  /* margin-top: 0.5rem; */
+  margin-top: 8px;
+  font-size: 14px;
+
+  color: #0d0d0e;
+   line-height: 18.9px;
+}
+
+/* == */
+
+/* Change font for category text */
+.partytext {
+margin-top: 0.5rem;
+font-size: 14px;
+font-weight: 500;
+font-family: 'Poppins', sans-serif; 
+color: #000;
+position: relative;
+}
+/* Underline when active */
+/* .kidtext.active::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: #e40046; 
+  margin: 4px auto 0 auto;
+  border-radius: 2px;
+} */
+/* Optionally, bold the active text */
+.partytext.active {
+  font-weight: 600;
+     color: #0d0d0e;
+    }

@@ -1,0 +1,67 @@
+.categorycontainer {
+   
+    padding: 10px 0px 0px 0px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 -3px 0px 0 rgba(1, 0, 0, 0.1);
+    position: sticky;
+    top: 11%;
+    z-index: 59;
+}
+.catogoryhead2{
+  height: 146px;
+}
+    .categorynav{
+font-size: 14px;
+margin-left: 14.5%;
+    }
+    .categoryhead{
+    font-size: 25px;
+    font-weight: bold;
+    color: #0d0d0e;
+    line-height: 128%;
+    margin-left: 14.5%;
+    }
+    
+.categorybanner1{
+  margin-left:14%;
+width: 71%;
+}
+.carousel-control-next-icon {
+  /* margin-left: -120%; */
+  position: relative;
+  right: 45%;
+}
+.carousel-control-prev-icon{
+    /* margin-left: 77%; */
+     position: relative;
+  left: 50%;
+}
+  .imgcategory{ width: 80px;
+    height: 100px;
+    object-fit: contain;
+    border: 2px solid transparent;
+    transition: border 0.3s;
+}
+ .imgcategorydiv{
+  position: relative;
+  left: 14%;
+ bottom: 13px;
+ }
+.card{
+  padding: 0px 0px 0px 0px;
+}
+.card-body{
+  padding-bottom: 0px;
+  margin:-5px 0px -22px 0px;
+}
+.eveninghead1{
+  width: 30%;
+}
+.eveningimgA{
+  width: 100%;
+}
+.eveninghead{
+  gap: 10px;
+  width: 93%;
+  margin-left: 7%;
+}

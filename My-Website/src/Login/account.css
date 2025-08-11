@@ -1,0 +1,45 @@
+.account-container {
+  background-color: #fff;
+  padding: 20px;
+  width: 72%;
+  margin-left: 13%;
+}
+
+.account-tabs .nav-link {
+  background-color: #f8f8f8;
+  color: #212529;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 500;
+}
+
+.account-tabs .nav-link:hover {
+  background-color: #eee;
+}
+
+.active-tab {
+  background-color: #fff !important;
+  font-weight: bold;
+  border-left: 4px solid #dc3545;
+  color: #000;
+}
+
+/* 
+.account-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.accountHead .nav-link {
+  color: #333;
+  border-left: 3px solid transparent;
+}
+
+.accountHead .nav-link:hover {
+  background-color: #f5f5f5;
+}
+
+.accountHead .active-tab {
+  background-color: #fff;
+  border-left: 3px solid #dc3545;
+  font-weight: bold;
+} */

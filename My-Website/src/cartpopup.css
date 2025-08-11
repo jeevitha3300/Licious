@@ -1,0 +1,140 @@
+.btncheck{
+    background-color: #ff2e56;
+
+    border: none;
+    font-weight: bold;
+    padding:6px 0px;
+    color: white;
+    position: relative;
+    left: 0%;
+    top: 0px;
+}
+.btncontinue{
+      background-color: #ff2e56;
+    border: none;
+    font-weight: bold;
+    padding:6px 0px;
+    color: white;
+    position: relative;
+    left: 0%;
+    top: 0px;
+}
+.btnview{
+       background-color: #ff2e56;
+    border: none;
+    font-weight: bold;
+    padding:6px 0px;
+    color: white;
+    position: relative;
+    left: 0%;
+    top: 0px;
+}
+.popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(33, 33, 33, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.popup-box {
+  background: #fff;
+  border-radius: 4px;
+  width: 900px;
+  max-width: 95%;
+  /* padding: 20px; */
+  padding:20px 2px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.popup-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.popup-heading {
+  font-size: 18px;
+  font-weight: 500;
+  padding-bottom:5px ;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.084);
+}
+
+.popup-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+.popup-left {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  padding: 20px;
+}
+
+.popup-product-image {
+  /* width: 130px; */
+
+  width:40%;
+  height: auto;
+  border: 1px solid #eee;
+}
+
+.popup-product-title {
+ font-size: 22px;
+    font-weight: 400;
+color: #666;
+        margin-bottom: 8px;
+}
+
+.popup-product-qty {
+ font-size: 24px;
+    color: #555;
+    font-weight: normal;
+}
+.popup-product-qty1 {
+ font-size: 24px;
+   color: #242424;
+    
+    font-weight: 700;
+}
+
+.popup-right {
+  width: 250px;
+ background-color: #7777771b;
+  border-radius: 4px;
+  padding: 15px;
+  text-align: center;
+}
+
+.popup-subtotal {
+     color: #666;
+    font-size: 15px;
+}
+
+.popup-total {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 5px;
+  color: #333;
+}
+
+.popup-items {
+  font-size: 15px;
+    color: #666;
+  margin: 10px 0 0;
+}
+      

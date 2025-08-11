@@ -1,0 +1,45 @@
+.imgbanner{
+    /* height: 100%; */
+    width: 97%;
+   border-radius: 1rem;
+  }
+ 
+@media(min-width:320px) and (max-width:426px){
+  .banone{
+ padding: 0px 20px;
+  }
+  .imgb{
+    height: 130px;
+    object-fit: fill;
+  }
+}
+@media(min-width:427px) and (max-width:768px){
+  .banone{
+   padding: 0px 10px;
+  }
+  .imgb{
+    height: 130px;
+    }
+}
+@media(min-width:769px) and (max-width:1025px){
+  .banone{
+   padding: 0px 10px;
+  }
+  
+}
+ @media(min-width:1396.36px) and (max-width:1439px) { 
+   .banone{
+   padding: 0px 65px;
+    
+  }
+  .imgb{
+   width: 95%;
+  }
+ }
+@media(min-width:1440px) and (max-width:2560px) { 
+ .banone{
+   padding: 0px 100px;
+    
+  }
+}
+

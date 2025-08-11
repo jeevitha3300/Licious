@@ -1,0 +1,40 @@
+.AA{
+  margin-top: -16px;
+}
+.login-offcanvas-header{
+  margin-top: 35%;
+  
+}
+.login-proceed-btn{
+padding: 10px 0px;
+border: none; 
+}
+
+.telephone:focus{
+  outline: none;
+}
+.custom-input::placeholder {
+  color: #888;          
+  color: #aaa;
+  font-size: 14px;
+  font-weight: 400;}
+.form-floating{
+    margin-top: -5%;
+}
+.custom-input{
+  border: none;
+  border-bottom: 2px solid  #cbcbcb;
+  outline: none;
+  padding: 8px;
+  width:97%;
+ 
+}
+.form-floating .form-control:focus {
+  border-color: #28a745;
+  background-color: #f9f9f9;
+  box-shadow: none;
+}
+
+.form-floating .custom-input.is-valid:focus {
+ background-color: #f6fff8;
+} 

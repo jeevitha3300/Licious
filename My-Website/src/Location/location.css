@@ -1,0 +1,119 @@
+.locationcol1placeholder::placeholder {
+  color: #0d0d0e;
+  font-weight: 400;
+  
+}
+.locationhead{
+  background: #fff;
+ padding: 3px 0px 2.5rem 0px ;
+  border-radius: .5rem;
+  box-shadow: 0 -1px 15px 0 rgba(0, 0, 0, .3);
+margin-right: 15.5%;
+}
+/* screren 320 */
+@media (min-width: 320px)and (max-width:426px){
+  .locationhead{
+   width: 96%;
+    padding: 3px 0px 9rem 0px ;
+    box-shadow: 0px 0 -10px rgba(0, 0, 0, 0.3);
+    border-radius: 0px;
+    margin-top: 10px;
+    height: 500px;
+  }
+  .locationhead1{
+    width: 90%;
+  }
+  .searchLoc{
+    position: relative;
+    top: 24px;
+  }
+  .searchlocate{
+       margin-bottom: 30px;
+  }
+  .searchlocate,.currentlocate{
+    padding: 10px 10px 10px 20px;
+box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .078);
+ border-radius: .5rem;
+    }
+    .locationcol1placeholder,.currentlocate3{
+      padding-left: 20px;
+    }
+    
+    .currentlocate2{
+    margin-left: -85%;
+  }
+}
+
+  @media (min-width:426px)and (max-width: 769px){
+    .locationhead{
+      margin-top: 30px;
+  max-width:100%;
+       padding:2px 0px 6.8rem 0px ;
+       margin-right: 6%;
+     } 
+   .locationhead1{
+      width: 95%;
+      padding: 70px 10px 10px 40px;
+      box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .078);
+    }
+    .searchlocate{
+      padding: 15px 10px 15px 20px;
+      border-radius: 1rem;
+    }
+    .searchlocate,.currentlocate{
+      border: 1px solid #eee;
+      width: 52%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+    }
+  .currentlocate{
+        width: 30%;
+        height: 5%;
+        margin-left: 15%;
+        margin-top: 3%;
+      border-radius: 14px;
+      }
+      .currentlocate2{
+        margin-left: -20%;
+      }
+  }
+  /* screen 1025 */
+  @media (min-width:770px)and (max-width:1026px){
+   .locationhead{
+    max-width:72%;
+         padding:2px 0px 3rem 0px ;
+         margin-right: 15%;
+       } 
+     .locationhead1{
+        width: 95%;
+       margin-top: 20px;
+       padding: 15px 10px 10px 10px;
+box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .078);
+      }
+   .currentlocate{
+        margin-top: -1%;
+      }
+     }
+   /* laptop screen */
+@media(min-width:1396.36px)  and (max-width:1439){
+.locationhead{
+width: 70%;
+margin-right: 15.5%;
+}
+.locationhead1{
+ padding:6px;
+width: 97%;
+box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .078)
+}
+}
+  /* screen 1440 */
+  @media(min-width:1440px){
+    .locationhead{
+      width: 74.5%;
+      margin-right: 13%;
+      }
+      .locationhead1{
+       padding:6px;
+      width: 97%;
+      box-shadow: 0 2px 6px 0 rgba(0, 0, 0, .078)
+      }
+   }

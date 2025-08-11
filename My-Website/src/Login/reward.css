@@ -1,0 +1,17 @@
+.rewards-page {
+  background-color: #f9f8f8;
+  min-height: 100vh;
+}
+
+.rewards-header {
+  background: linear-gradient(to right, #f44336, #ff7043);
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #d32f2f;
+  background-color: #ffeaea;
+}
