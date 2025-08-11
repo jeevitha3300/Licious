@@ -86,7 +86,7 @@ const indexOfLastItem = currentPage * entriesPerPage;
             <th>Email</th>
             <th>City</th>
             <th>Password</th>
-            <th>Satus</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
