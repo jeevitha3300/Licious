@@ -37,6 +37,8 @@ const indexOfLastItem = currentPage * entriesPerPage;
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
+    <>
+  
     <div className="usertable-container mt-2">
       <div className='userh'>
         User List
@@ -147,6 +149,7 @@ const indexOfLastItem = currentPage * entriesPerPage;
         </ul>
       </nav>
     </div>
+    </>
   );
 };
 
