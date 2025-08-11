@@ -1,24 +1,33 @@
-import React from 'react'
-import 
- {BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch, BsJustify}
- from 'react-icons/bs'
-import "./adminheader.css";
-function AdminHeader({OpenSidebar}) {
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FiUser } from "react-icons/fi";
+import './adminheader.css'
+import { FaSignOutAlt, FaChevronDown } from "react-icons/fa";
+const AdminHeader = () => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const navigate = useNavigate();
+  const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
+  const handleLogout = () => navigate('/Admin');
+  const handleProfile = () => navigate('/dashboard');
   return (
-    <header className='header'>
-        <div className='menu-icon'>
-            <BsJustify className='icon' onClick={OpenSidebar}/>
+    <>
+      <div className="adminheader" onClick={toggleDropdown}>
+        <div className="adminheader1">
+          Admin <FaChevronDown style={{ marginLeft: "5px", fontSize: "12px" }} />
         </div>
-        <div className='header-left'>
-            <BsSearch  className='icon'/>
-        </div>
-        <div className='header-right'>
-            <BsFillBellFill className='icon'/>
-            <BsFillEnvelopeFill className='icon'/>
-            <BsPersonCircle className='icon'/>
-        </div>
-    </header>
-  )
-}
+        {dropdownVisible && (
+          <div className="admin-drop">
+            <div className="dropdown-item pb-3" onClick={handleProfile}>
+              <FiUser style={{ marginRight: "10px" }} /> Profile
+            </div>
+            <div className="dropdown-item pb-3" onClick={handleLogout}>
+              <FaSignOutAlt style={{ marginRight: "10px" }} /> Logout
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
 
-export default AdminHeader
+export default AdminHeader;

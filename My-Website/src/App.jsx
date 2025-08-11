@@ -23,18 +23,18 @@ import WalletInfo from './Login/WalletInfo.jsx';
 import EditProfile from './Login/EditProfile.jsx';
 import AddressStep from './Header/Addressstep.jsx';
 import AdminLogin from './Admin/AdminLogin.jsx';
-import Dashboard from './Admin/DashBoard.jsx';
+
 import UserTable from './Admin/UserTable.jsx';
-import AdminHeader from './Admin/AdminHeader.jsx';
-import AdminSidebar from './Admin/AdminSidebar.jsx';
-// Admin
+// import AdminHome from './Admin/AdminHome.jsx';
+import Dashboard from './Admin/DashBoard.jsx';
+
 
 function Home() {
-  const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
+  // const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
 
-  const OpenSidebar = () => {
-    setOpenSidebarToggle(!openSidebarToggle)
-  }
+  // const OpenSidebar = () => {
+  //   setOpenSidebarToggle(!openSidebarToggle)
+  // }
  return (
    <>
     <Header />
@@ -45,11 +45,7 @@ function Home() {
        <Flavour/>
         <Customersay/>
        <Promise/>
-     <div className='grid-container'>
-      <AdminHeader OpenSidebar={OpenSidebar}/>
-      <AdminSidebar openSidebarToggle={openSidebarToggle} OpenSidebar={OpenSidebar}/>
-      <Home />
-    </div>
+ 
   </>
   );
 }
@@ -58,7 +54,7 @@ function App() {
     <Router>
     <Routes>
       <Route path="/Admin" element={<AdminLogin/>} />
-      <Route path="/dashboard" element={<Dashboard/>} />
+      <Route path="/dashboard" element={<Dashboard />} />
        <Route path="/user-list" element={<UserTable/>} />
  <Route path="/category/:id" element={<Category />} />
 <Route path="/checkout" element={<AddressStep/>} />
