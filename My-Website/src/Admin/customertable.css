@@ -1,0 +1,73 @@
+.customertable-container{
+  flex: 1;
+     width: 94%;
+background-color: #bda9ad; 
+max-height:none;
+  min-height: 120vh;
+  position: relative;
+  top: 63px;
+  left:6%;
+
+}
+   .customerheader{
+     width: 83%;
+    background: #fff;
+      position: relative;
+      top: 20px;
+   left: 14%;
+}
+.customer-table1,.customer-table2{
+   background-color: #ffffff;
+   padding: 20px;
+   width: 83%;
+      position: relative;
+      top: 30px;
+   left: 14%;
+  }
+   .cush3 {
+    /* border-bottom: 1px solid #e6ecf5; */
+    background-color: #fff;
+    padding: 10px 15px 10px 15px;
+    font-size: 20px;
+    color: #515365;
+    font-weight: 500;
+  }
+.pagination{
+  position: relative;
+  right: 3%;
+  top: 30px;
+}
+
+
+
+
+
+.userentries{
+   background-color: #ffffff;
+border-bottom: 1px solid #e6ecf5 ;
+padding: 10px;
+margin: 0px 10px;
+border-radius: 5px;
+}
+.usertable{
+padding: 10px 30px 10px 30px;
+}
+
+
+/* Status badge styles */
+.badge {
+  padding: 0.5em 0.75em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 0.35rem;
+}
+
+.badge.bg-success {
+  background-color: #28a745 !important; /* Green for enabled */
+  color: #fff;
+}
+
+.badge.bg-secondary {
+  background-color: #dc3545 !important; /* Red for disabled */
+  color: #fff;
+}

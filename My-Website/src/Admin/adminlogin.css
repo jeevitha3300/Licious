@@ -3,41 +3,84 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #888da8;
+background-color: #ffe3f1;
   }
+ 
 .adminlogin-head {
-  background: white;
-  text-align: center;
+ background-color: #ffe3f1;
+   display: flex;
+  width: 850px;
+  height: 500px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+text-align: center;
   padding: 60px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+.adminleft {
+  flex: 1;
+  background-color: #fad4e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+}
+
+.adminleft img {
+  max-width: 100%;
+  height: auto;
+  width: 100px;
+  object-fit: contain;
+}
+.adminlogin-form {
+  flex: 1;
+  background-color: #fff0f7;
+  padding: 60px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .adminh3{
   font-size: 15px;
-  color: #888da8;
+   /* color: #6c004e; */
+   color:#D11243;;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
 }
 .adminlogininput{
-  font-size: 14px;
-  border: 1px solid #e6ecf5;
+   /* padding: 16px 16px; */
+   position: relative;
+   left: 10%;
+  margin-bottom: 20px;
+  font-size: 13px;
+  /* border: 1px solid #d48cb5; */
+   border: 1px solid #D11243;
   color: #888da8;
   display: block;
-  width: 100%;
+  width: 80%;
   padding: 10px;
   margin-bottom: 15px;
-  border-radius: 4px;
+  border-radius: 8px;
+
+
 }
-.adminlogin-btn{
- position: relative;
-  left: 40%;
-  width: 20%;
-  padding: 5px;
-  /* background-color: #0f9aee; */
-  background-color:#D11243;;
-  color: white;
+.adminlogin-btn {
+  padding: 12px;
+  /* background-color: #a00061; */
+   background-color: #D11243;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+   position: relative;
+  left: 35%;
+  width: 30%;
+  transition: background-color 0.3s ease;
 }
+
 .adminlogin-btn:hover {
   background-color: #e04343;
 }
@@ -45,3 +88,12 @@
   color: red;
   margin-bottom: 10px;
 }
+.adminlogininput:focus {
+  border-color: #b60061;
+  outline: none;
+}
+.adminlogin-btn:hover {
+  background-color: #800048;
+}
+
+

@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './adminlogin.css';
-
+import adminloginimg from '../assets/images/logo.svg';
 function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
   const handleLogin = (e) => {
     e.preventDefault();
-
     setError(''); 
-
-    // Replace this with real backend authentication logic in production
     const validUsername = 'admin';
     const validPassword = 'admin@1234';
 
@@ -26,7 +22,11 @@ function AdminLogin() {
 
   return (
     <div className="adminlogin-background">
-      <div className="adminlogin-head ">
+     
+      <div className="adminlogin-head d-flex">
+         <div className="adminleft">
+        <img src={adminloginimg} alt="" />
+      </div>
         <form onSubmit={handleLogin} className="adminlogin-form ">
           <h3 className=' adminh3 mb-4'>Please enter your username and password to login</h3>
 

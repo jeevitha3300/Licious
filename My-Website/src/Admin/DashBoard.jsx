@@ -261,10 +261,12 @@
 
 // ==================================================================================
 import React, { useState } from "react";
-import UserTable from "./UserTable";
+
 import './dashboard.css';
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import NewUser from "./NewUser";
+import CustomerTable from "./CustomerTable";
 const DashBoard = () => {
     const [activeContent, setActiveContent] = useState("dashboard");
 
@@ -278,10 +280,13 @@ const DashBoard = () => {
     ];
 
     return (
+        <>
+           <AdminSidebar />
+            <AdminHeader />
         <div style={{ display: "flex", cursor: "pointer" }}>
-            <AdminSidebar setActiveContent={setActiveContent} />
+         
             <div className="adminmain">
-                <AdminHeader />
+                
                 <div className="admindash-cards">
                     {activeContent === "dashboard" &&
                         stats.map((stat, index) => (
@@ -290,10 +295,12 @@ const DashBoard = () => {
                                 <p className="dashboardtext2">{stat.title}</p>
                             </div>
                         ))}
-                    {activeContent === "userList" && <UserTable />}
+                    {activeContent === "customer" && <CustomerTable/>}
+                    {activeContent === "newuser" && <NewUser />}
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

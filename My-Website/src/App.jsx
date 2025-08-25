@@ -23,18 +23,16 @@ import WalletInfo from './Login/WalletInfo.jsx';
 import EditProfile from './Login/EditProfile.jsx';
 import AddressStep from './Header/Addressstep.jsx';
 import AdminLogin from './Admin/AdminLogin.jsx';
-
-import UserTable from './Admin/UserTable.jsx';
-// import AdminHome from './Admin/AdminHome.jsx';
 import Dashboard from './Admin/DashBoard.jsx';
+import CustomerTable from './Admin/CustomerTable.jsx';
+import NewUser from './Admin/NewUser.jsx';
+import ManageUser from './Admin/ManageUser.jsx';
+import NewBanner from './Admin/NewBanner.jsx';
 
+import { BannerProvider } from './Admin/BannerContext.jsx';
+import ManageBanner from './Admin/ManageBanner.jsx';
 
 function Home() {
-  // const [openSidebarToggle, setOpenSidebarToggle] = useState(false)
-
-  // const OpenSidebar = () => {
-  //   setOpenSidebarToggle(!openSidebarToggle)
-  // }
  return (
    <>
     <Header />
@@ -45,17 +43,23 @@ function Home() {
        <Flavour/>
         <Customersay/>
        <Promise/>
- 
-  </>
+
+ </>
   );
 }
 function App() {
   return (
+    <>
+  <BannerProvider>
     <Router>
     <Routes>
       <Route path="/Admin" element={<AdminLogin/>} />
       <Route path="/dashboard" element={<Dashboard />} />
-       <Route path="/user-list" element={<UserTable/>} />
+       <Route path="/managecustomer" element={<CustomerTable/>} />
+        <Route path="/newuser" element={<NewUser/>} />
+         <Route path="/manageuser" element={<ManageUser />} />
+           <Route path="/newbanner" element={<NewBanner />} />
+           <Route path="/managebanner" element={<ManageBanner />} />
  <Route path="/category/:id" element={<Category />} />
 <Route path="/checkout" element={<AddressStep/>} />
 <Route path="/" element={<Home />} />
@@ -71,8 +75,10 @@ function App() {
                <Route path="/ReferFriend" element={<ReferFriend/>}/>
                <Route path="/wallet-info" element={<WalletInfo/>}/>
                <Route path="/EditProfile" element={<EditProfile/>}/>
- </Routes>
+       </Routes>
     </Router>
+  </BannerProvider>  
+    </>
   );
 }
 

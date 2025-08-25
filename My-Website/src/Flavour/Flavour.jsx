@@ -308,7 +308,7 @@ const Flavour = () => {
         <p className="textf2">Juicy bites, Ready in no time!</p>
 
         <button className="arrow arrowleft outside-left" onClick={() => scroll("left")}>
-          ‹
+         <span >‹</span> 
         </button>
 
         <div className="carousel-wrapper">
@@ -390,7 +390,7 @@ const Flavour = () => {
         </div>
 
         <button className="arrow arrowright outside-right" onClick={() => scroll("right")}>
-          ›
+       <span > ›</span>   
         </button>
       </div>
     </>

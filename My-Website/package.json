@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
+    "file-saver": "^2.0.5",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",
@@ -19,7 +22,8 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.1",
     "recharts": "^3.1.0",
-    "swiffy-slider": "^1.6.0"
+    "swiffy-slider": "^1.6.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

@@ -3,6 +3,7 @@ import "./bestsellerAll.css"; // Your styles
 import { useCart } from "../CartContext";
 import CartPopUp from "../CartPopUp";
 import { useNavigate } from "react-router-dom";
+import Header from "../Header/Header";
 
 const BestsellerAll = () => {
   const [products, setProducts] = useState([]);
@@ -47,6 +48,8 @@ const BestsellerAll = () => {
   );
 
   return (
+    <>
+    <Header/>
     <div className="container mt-4">
       <CartPopUp
         show={showPopup}
@@ -136,6 +139,7 @@ const BestsellerAll = () => {
         })}
       </div>
     </div>
+    </>
   );
 };
 

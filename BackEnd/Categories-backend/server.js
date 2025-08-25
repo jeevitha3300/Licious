@@ -98,10 +98,17 @@ const Flavour = require('./models/flavour');            //flavour
 const Bestseller=require('./models/bestseller')         //bestseller
 const CustomerSay=require('./models/customersay')       //customersay
 const Premiumfood=require('./models/premiumfood')       //premiumfood
+const Customer=require('./models/customer')
+const User=require('./models/user')
+
+
 const app = express();
 const PORT = 5000;
 // Middleware
 app.use(cors());
+// Increase the limit to handle large base64 images (adjust as needed)
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json());
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -126,6 +133,104 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
+// const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } }); 
+
+// // ========== customer Registration API ==========
+app.get('/api/customers', async (req, res) => {
+  try {
+    const customers = await Customer.find();
+    res.json(customers);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    res.status(500).json({ message: 'Failed to fetch customers.' });
+  }
+});
+// ---------------------Customer--------------------------------
+// Register new customer
+app.post('/api/register', async (req, res) => {
+  try {
+    const { firstName, lastName, mobile, email, password, city } = req.body;
+
+    const existingCustomer = await Customer.findOne({ email });
+    if (existingCustomer) {
+      return res.status(400).json({ message: 'Customer already registered.' });
+    }
+
+    const newCustomer = new Customer({ firstName, lastName, mobile, email, password, city });
+    await newCustomer.save();
+
+    res.status(201).json({ message: 'Customer registered successfully.' });
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ message: 'Server error during registration.' });
+  }
+});
+
+// Delete customer by ID
+app.delete('/api/customers/:id', async (req, res) => {
+  try {
+    const customer = await Customer.findByIdAndDelete(req.params.id);
+    if (!customer) return res.status(404).json({ message: 'Customer not found' });
+    res.json({ message: 'Customer deleted successfully' });
+  } catch (err) {
+    console.error('Delete error:', err);
+    res.status(500).json({ message: 'Server error during deletion' });
+  }
+});
+
+// Update customer by ID
+app.put('/api/customers/:id', async (req, res) => {
+  try {
+    const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedCustomer) return res.status(404).json({ message: 'Customer not found' });
+    res.json(updatedCustomer);
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ message: 'Server error during update' });
+  }
+});
+// --------------------------User-------------------------------
+// Create User
+app.post('/api/manageuser', async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get all users
+app.get('/api/manageuser', async (req, res) => {
+  try {
+     const users = await User.find().sort({ id: -1 }); 
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Update user
+app.put('/api/manageuser/:id', async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json({ message: "User updated", updatedUser });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete user
+app.delete('/api/manageuser/:id', async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "User deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+// ------------------------------Products----------------------------
 // POST route - Create product with image upload
 app.post('/api/products', upload.array('images', 5), async (req, res) => {
   try {
@@ -178,6 +283,7 @@ app.get('/api/head/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch head data' });
   }
 });
+// ----------------categories------------------
 // GET route - Retrieve categories
 app.get('/api/categories', async (req, res) => {
   try {
@@ -191,19 +297,129 @@ app.get('/api/categories', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch categories data' });
   }
 });
-// API Route to get banners
+// ----Banner--------------------
+// Create banner
+app.post('/api/banner', async (req, res) => {
+  try {
+    const { name, image } = req.body;
+    const newBanner = new Banner({ name, image, enabled: true });
+    await newBanner.save();
+    res.status(201).json(newBanner);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error saving banner' });
+  }
+});
+
+// Get all banners
 app.get('/api/banner', async (req, res) => {
   try {
-    const banners = await Banner.find(); 
-    if (!banners || banners.length === 0) {
+    const banners = await Banner.find();
+    if (!banners.length) {
       return res.status(404).json({ message: 'No banners found' });
     }
     res.json(banners);
-  } catch (err) {
-    console.error('Error fetching banners:', err);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Failed to fetch banners' });
   }
 });
+
+// Update banner (name or image)
+app.put('/api/banner/:id', async (req, res) => {
+  try {
+    const updatedBanner = await Banner.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.json(updatedBanner);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update banner' });
+  }
+});
+
+// Toggle banner's enabled status
+app.put('/api/banner/:id/toggle', async (req, res) => {
+  try {
+    const banner = await Banner.findById(req.params.id);
+    if (!banner) {
+      return res.status(404).json({ message: 'Banner not found' });
+    }
+    banner.enabled = !banner.enabled;
+    await banner.save();
+    res.json(banner);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to toggle banner status' });
+  }
+});
+
+// Delete banner
+app.delete('/api/banner/:id', async (req, res) => {
+  try {
+    await Banner.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Banner deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to delete banner' });
+  }
+});
+
+
+
+// // POST add banner
+// app.post('/api/banner', async (req, res) => {
+//   try {
+//     const { name, image } = req.body;
+//     const newBanner = new Banner({ name, image });
+//     await newBanner.save();
+//     res.status(201).json(newBanner);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Error saving banner' });
+//   }
+// });
+// app.get('/api/banner', async (req, res) => {
+//   try {
+//     const banners = await Banner.find();
+//     if (!banners || banners.length === 0) {
+//       return res.status(404).json({ message: 'No banners found' });
+//     }
+//     res.json(banners);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Failed to fetch banners' });
+//   }
+// });
+
+// // PUT update banner (name or enabled)
+// app.put('/api/banner/:id', async (req, res) => {
+//   try {
+//     const updatedBanner = await Banner.findByIdAndUpdate(
+//       req.params.id,
+//       { $set: req.body },
+//       { new: true }
+//     );
+//     res.json(updatedBanner);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Failed to update banner' });
+//   }
+// });
+
+// // DELETE banner
+// app.delete('/api/banner/:id', async (req, res) => {
+//   try {
+//     await Banner.findByIdAndDelete(req.params.id);
+//     res.json({ message: 'Banner deleted successfully' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Failed to delete banner' });
+//   }
+// });
+
 
 // API Route to get cutomersay
 app.get('/api/customersay', async (req, res) => {

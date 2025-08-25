@@ -1,0 +1,68 @@
+.newbanner-container {
+   flex:1;
+      width: 92%;
+background-color: #bda9ad;
+   max-height:none;
+  min-height: 100vh;
+  position: relative;
+  top: 63px;
+ left: 9.5%;
+}
+.banner-form-container {
+  width: 950px;
+  margin: 50px auto;
+background-color: #fff;
+  padding: 60px 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+       position: relative;
+      top: 5px;
+   left:2.5%;
+}
+.newbannerheader{
+    width: 950px;
+    background: #fff;
+      position: relative;
+      top: 25px;
+   left: 19%;
+   }
+.newform {
+    background-color: #fff;
+    padding: 10px 15px 10px 15px;
+    font-size: 20px;
+    color: #2d2d32;
+    font-weight: 500;
+  }
+.bannername,.bannerimage{
+  width: 50%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1.5px solid black;
+  border-radius: 5px; 
+}
+form label {
+  margin-top: 20px;
+  display: block;
+  font-weight: 500;
+}
+.form-buttons {
+  margin-top: 25px;
+  position: relative;
+  left: 29%;
+}
+.cancelbtn {
+ padding: 8px 20px;
+    border-radius: 25px;
+ background-color: #D11243;
+ border: none;
+     color: #fff;
+     margin: 3px;
+}
+.save-btn {
+ background-color: #198754;
+  color: white;
+   border: none;
+   padding: 8px 25px;
+   border-radius: 25px;
+   margin: 3px;
+} 

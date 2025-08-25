@@ -86,7 +86,7 @@ const FishSeafood = () => {
         <p className="textf2">Same-day catch: fresh & flavourful</p>
 
         <button className="arrow arrowleft outside-left" onClick={() => scroll("left")}>
-          ‹
+         <span style={{position:"relative",bottom:"10px"}}> ‹ </span> 
         </button>
 
         <div className="carousel-wrapper">
@@ -168,7 +168,7 @@ const FishSeafood = () => {
         </div>
 
         <button className="arrow arrowright outside-right" onClick={() => scroll("right")}>
-          ›
+         <span  style={{position:"relative",bottom:"10px"}}>›</span> 
         </button>
       </div>
     </>

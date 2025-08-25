@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
-// Define schema and model
 const bannerSchema = new mongoose.Schema({
-  image: String,
-}, { collection: 'banner' });
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  enabled: { type: Boolean, default: true }
+});
 
 const Banner = mongoose.model('Banner', bannerSchema);
+
 module.exports = Banner;

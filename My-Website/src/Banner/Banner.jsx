@@ -1,42 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import './banner.css'
-const BannerList = () => {
-  const [banners, setBanners] = useState([]);
-  const [error, setError] = useState(null);
+import React, { useContext } from 'react';
+import { BannerContext } from '../Admin/BannerContext';
+import './banner.css';
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/banner')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch banners');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // console.log("Fetched banners:", data);
-        setBanners(data);
-      })
-      .catch(err => setError(err.message));
-  }, []);
+const Banner = () => {
+  const { banners, error } = useContext(BannerContext);
+
+  // Filter only enabled banners
+  const enabledBanners = banners.filter(banner => banner.enabled);
+
   return (
     <>
-      
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div className=' container banone mt-4'
-      //  style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
-       >
-        {banners.map((item, index) => (
-          <img
-          className='imgbanner'
-            key={index}
-            src={item.image}
-            alt={`Banner ${index}`}
-            style={{ height: 'auto', objectFit: 'cover' }}
-          />
-        ))}
+      <div className="container banone mt-4">
+        {enabledBanners.length === 0 ? (
+          <p>No banners to display</p>
+        ) : (
+          enabledBanners.map((item, index) => (
+            <img
+              className="imgbannerf"
+              key={index}
+              src={item.image}
+              alt={item.name}
+              style={{ objectFit: 'cover' }}
+            />
+          ))
+        )}
       </div>
     </>
   );
 };
 
-export default BannerList;
+export default Banner;

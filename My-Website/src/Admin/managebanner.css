@@ -1,0 +1,54 @@
+/* .manage-banner-container {
+ background: #fff;
+  padding: 40px;
+  width: 60.1rem;
+  border-radius: 8px;
+  position: absolute;
+  top: 9rem;
+  left: 17.7rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.manage-banner-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.banner-preview {
+  width: 120px;
+  height: auto;
+  border-radius: 6px;
+} 
+
+button {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+} 
+
+ /* button:nth-child(1) {
+  background-color: #D11243;
+  color: white;
+}  */
+
+/* button:nth-child(2) {
+  background-color: #198754;
+  color: white;
+} */
