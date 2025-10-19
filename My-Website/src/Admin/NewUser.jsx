@@ -1,9 +1,15 @@
 import "./newuser.css";
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
 import Alert from 'react-bootstrap/Alert';
+
 const Newuser = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const editingUser = location.state?.user;
+
   const initialFormState = {
     name: "",
     email: "",
@@ -13,52 +19,78 @@ const Newuser = () => {
     confirmPassword: "",
     permissions: {
       User: false,
-      Category: false,
-      Product: false,
       Banner: false,
+      Category: false,
+      Subcategory: false,
+      Product: false,
       Customer: false,
       Testimonial: false,
+      Order: false,
+      Setting: false,
     },
   };
 
-  const [form, setForm] = useState(initialFormState);
+  const [form, setForm] = useState(() => {
+    if (editingUser) {
+      return {
+        ...editingUser,
+        password: "",
+        confirmPassword: "",
+        permissions: {
+          ...initialFormState.permissions,
+          ...editingUser.permissions,
+        },
+      };
+    }
+    return initialFormState;
+  });
+
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (editingUser) {
+      setForm({
+        ...editingUser,
+        password: "",
+        confirmPassword: "",
+        permissions: {
+          ...initialFormState.permissions,
+          ...editingUser.permissions,
+        },
+      });
+    }
+  }, [editingUser]);
 
   const validateForm = () => {
     const newErrors = {};
 
-    // Name
     if (!form.name.trim()) newErrors.name = "Name is required";
     else if (form.name.trim().length < 3)
       newErrors.name = "Name must be at least 3 characters";
 
-    // Email
     if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email.trim()))
       newErrors.email = "Enter a valid email address";
 
-    // Contact
     if (!form.contact.trim()) newErrors.contact = "Contact number is required";
     else if (!/^\d{10}$/.test(form.contact.trim()))
       newErrors.contact = "Contact must be a 10-digit number";
 
-    // Designation
     if (!form.designation.trim())
       newErrors.designation = "Designation is required";
 
-    // Password
-    if (!form.password) newErrors.password = "Password is required";
-    else if (form.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
+    if (!editingUser || form.password || form.confirmPassword) {
+      if (!form.password) newErrors.password = "Password is required";
+      else if (form.password.length < 6)
+        newErrors.password = "Password must be at least 6 characters";
 
-    // Confirm Password
-    if (!form.confirmPassword)
-      newErrors.confirmPassword = "Please confirm your password";
-    else if (form.password !== form.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
+      if (!form.confirmPassword)
+        newErrors.confirmPassword = "Please confirm your password";
+      else if (form.password !== form.confirmPassword)
+        newErrors.confirmPassword = "Passwords do not match";
+    }
 
-    // Permissions
     const isAnyPermissionSelected = Object.values(form.permissions).some(
       (val) => val === true
     );
@@ -95,17 +127,43 @@ const Newuser = () => {
       return;
     }
 
+    let url = "http://localhost:5000/api/manageuser";
+    let method = "POST";
+
+    if (editingUser) {
+      url = `http://localhost:5000/api/manageuser/${editingUser._id}`;
+      method = "PUT";
+    }
+
+    const payload = { ...form };
+    if (editingUser && (!form.password && !form.confirmPassword)) {
+      delete payload.password;
+      delete payload.confirmPassword;
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/manageuser", {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
-        setSuccessMessage("User created successfully!");
-        setForm(initialFormState);
+        setSuccessMessage(
+          editingUser ? "User updated successfully!" : "User created successfully!"
+        );
         setErrors({});
+
+        if (!editingUser) {
+          setForm(initialFormState);
+        }
+
+        setTimeout(() => {
+          setSuccessMessage("");
+          if (editingUser) {
+            navigate("/manageuser"); // ✅ redirect after update
+          }
+        }, 2000);
       } else {
         const data = await response.json();
         alert("Error: " + data.message);
@@ -116,19 +174,16 @@ const Newuser = () => {
   };
 
   const handleReset = () => {
-    setForm(initialFormState);
-    setErrors({});
-    setSuccessMessage("");
-  };
-  useEffect(() => {
-    if (successMessage) {
-      const timer = setTimeout(() => {
-        setSuccessMessage('');
-      }, 2000); 
-
-      return () => clearTimeout(timer);
+    if (editingUser) {
+      // ✅ Edit mode → redirect back to table
+      navigate("/manageuser");
+    } else {
+      // ✅ Create mode → clear form
+      setForm(initialFormState);
+      setErrors({});
+      setSuccessMessage("");
     }
-  }, [successMessage]);
+  };
 
   return (
     <>
@@ -136,15 +191,18 @@ const Newuser = () => {
       <AdminSidebar />
       <div className="newuser-container">
         <div className="newuserheader">
-          <h3 className="newform">New User</h3>
+          <h3 className="newform">{editingUser ? "Edit User" : "New User"}</h3>
         </div>
         <div className="form-container">
-                {/* Success Message */}
-            {successMessage && (
-  <Alert className="mb-5" variant="success">
-    {successMessage}
-  </Alert>
-)}
+    {successMessage && (
+            <Alert
+              style={{ border: "none", fontSize: "18px" }}
+              className="text-success text-end bg-white"
+              onClose={() => setMessage("")}
+            >
+              {successMessage}
+            </Alert>
+          )}
           <form className="styled-form" onSubmit={handleSubmit}>
             {/* Row 1 */}
             <div className="form-row">
@@ -211,7 +269,6 @@ const Newuser = () => {
                       name={key}
                       checked={form.permissions[key]}
                       onChange={handleCheckboxChange}
-                      
                     />
                     {key.charAt(0).toUpperCase() + key.slice(1)}
                   </label>
@@ -254,7 +311,7 @@ const Newuser = () => {
             {/* Actions */}
             <div className="form-actions">
               <button
-                type="reset"
+                type="button"
                 className="usercancel-btn"
                 onClick={handleReset}
               >
@@ -264,8 +321,6 @@ const Newuser = () => {
                 Submit
               </button>
             </div>
-
-      
           </form>
         </div>
       </div>

@@ -87,8 +87,8 @@ const Bestseller = () => {
         <h2 className="besttextf1">Bellersellers</h2>
         <p className="besttextf2">Most popular products near you!</p>
 
-        <button className="arrow arrowleft outside-left" onClick={() => scroll("left")}>
-        <span style={{position:"relative",bottom:"10px"}}>‹</span>  
+        <button className="arrow  outside-left new1" onClick={() => scroll("left")}>
+        <span style={{position:"relative",bottom:"4px"}}>‹</span>  
         </button>
 
         <div className="carousel-wrapper">
@@ -166,7 +166,7 @@ const Bestseller = () => {
         </div>
 
         <button className="arrow arrowright outside-right" onClick={() => scroll("right")}>
-        <span style={{position:"relative",bottom:"10px"}}>›</span> 
+        <span style={{position:"relative",bottom:"4px"}}>›</span> 
         </button>
       </div>
     </>

@@ -1,45 +1,74 @@
-.imgbannerf{
-    height: 250px;
-    width: 97%;
-border-radius: 1rem;
-  }
- 
-@media(min-width:320px) and (max-width:426px){
-  .banone{
- padding: 0px 20px;
-  }
-  .imgb{
-    height: 130px;
-    object-fit: fill;
-  }
+.imgbannerf {
+  height: 300px;
+  width: 96%;
 }
-@media(min-width:427px) and (max-width:768px){
-  .banone{
-   padding: 0px 10px;
-  }
-  .imgb{
-    height: 130px;
-    }
+
+.banone {
+  width: 96%;
+  padding: 0px 6%;
 }
-@media(min-width:769px) and (max-width:1025px){
-  .banone{
-   padding: 0px 10px;
+
+/*  Small mobile screens (up to 425px) */
+@media (max-width: 428px) {
+  .imgbannerf {
+    height: 150px;
   }
-  
-}
- @media(min-width:1396.36px) and (max-width:1439px) { 
-   .banone{
-   padding: 0px 65px;
-    
-  }
-  .imgb{
-   width: 95%;
-  }
- }
-@media(min-width:1440px) and (max-width:2560px) { 
- .banone{
-   padding: 0px 100px;
-    
+  .banone {
+    padding: 0px 4%;
   }
 }
 
+/* Medium mobile to small tablets (426px–768px) */
+@media (min-width: 429px) and (max-width: 768px) {
+  .imgbannerf {
+    height: 200px;
+    width: 100%;
+  }
+  .banone {
+    padding: 0px 4%;
+  }
+}
+
+/* Tablets (769px–1025px) */
+@media (min-width: 769px) and (max-width: 1025px) {
+  .imgbannerf {
+    height: 250px;
+    width: 100%;
+  }
+  .banone {
+    padding: 0px 2%;
+  }
+}
+
+/* Small desktops (1026px–1440px) */
+@media (min-width: 1026px) and (max-width: 1440px) {
+  .imgbannerf {
+    height: 300px;
+    width: 95%;
+  }
+  .banone {
+    padding: 0px 8%;
+  }
+}
+
+/* Large desktops (1441px–1920px) — your HP laptop likely falls here */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .imgbannerf {
+    height: 300px;
+    width: 96%;
+  }
+  .banone {
+    padding: 0px 7%;
+  }
+}
+
+/* Ultra-wide screens (1921px–2560px) */
+@media (min-width: 1921px) and (max-width: 2560px) {
+  .imgbannerf {
+    height: 320px;
+    width: 96%;
+  }
+  .banone {
+    padding: 0px 4%;
+  }
+}

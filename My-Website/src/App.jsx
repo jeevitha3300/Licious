@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import { AuthProvider } from './Admin/AuthContext.jsx';
+import ProtectedRoute from './Admin/ProtectRoute.jsx';
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Header/Header.jsx';
@@ -21,7 +23,6 @@ import Wallet from './Login/Wallet.jsx';
 import ReferFriend from './Login/ReferFriend.jsx';
 import WalletInfo from './Login/WalletInfo.jsx';
 import EditProfile from './Login/EditProfile.jsx';
-import AddressStep from './Header/Addressstep.jsx';
 import AdminLogin from './Admin/AdminLogin.jsx';
 import Dashboard from './Admin/DashBoard.jsx';
 import CustomerTable from './Admin/CustomerTable.jsx';
@@ -31,6 +32,11 @@ import NewBanner from './Admin/NewBanner.jsx';
 
 import { BannerProvider } from './Admin/BannerContext.jsx';
 import ManageBanner from './Admin/ManageBanner.jsx';
+import NewCategory from './Admin/NewCategory.jsx';
+import ManageCategory from './Admin/ManageCategory.jsx';
+import NewProduct from './Admin/NewProduct.jsx';
+import ManageProduct from './Admin/ManageProduct.jsx';
+import AddressStep from './Header/AddressStep.jsx';
 
 function Home() {
  return (
@@ -39,10 +45,10 @@ function Home() {
       <Banner />
       < Bestseller/>
       <ShopCategory/>
-     <FishSeafood/>
-       <Flavour/>
-        <Customersay/>
-       <Promise/>
+     {/* <FishSeafood/> */}
+       {/* <Flavour/> */}
+        {/* <Customersay/> */}
+       {/* <Promise/> */}
 
  </>
   );
@@ -50,16 +56,28 @@ function Home() {
 function App() {
   return (
     <>
+     <AuthProvider>
   <BannerProvider>
     <Router>
     <Routes>
       <Route path="/Admin" element={<AdminLogin/>} />
-      <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/dashboard" element={<Dashboard />} />
        <Route path="/managecustomer" element={<CustomerTable/>} />
         <Route path="/newuser" element={<NewUser/>} />
          <Route path="/manageuser" element={<ManageUser />} />
            <Route path="/newbanner" element={<NewBanner />} />
-           <Route path="/managebanner" element={<ManageBanner />} />
+           <Route path="/managebanner" element={<ManageBanner />} /> */}
+            {/* Protect admin routes */}
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+       <Route path="/managecustomer" element={<ProtectedRoute><CustomerTable/></ProtectedRoute>} />
+        <Route path="/newuser" element={<ProtectedRoute><NewUser/></ProtectedRoute>} />
+         <Route path="/manageuser" element={<ProtectedRoute><ManageUser /></ProtectedRoute>} />
+           <Route path="/newbanner" element={<ProtectedRoute><NewBanner /></ProtectedRoute>} />
+           <Route path="/managebanner" element={<ProtectedRoute><ManageBanner /></ProtectedRoute>} />
+            <Route path="/newcategory" element={<ProtectedRoute><NewCategory /></ProtectedRoute>} />
+             <Route path="/managecategory" element={<ProtectedRoute><ManageCategory /></ProtectedRoute>} />
+                <Route path="/newproduct" element={<ProtectedRoute><NewProduct/></ProtectedRoute>} />
+             <Route path="/manageproduct" element={<ProtectedRoute><ManageProduct/></ProtectedRoute>} />
  <Route path="/category/:id" element={<Category />} />
 <Route path="/checkout" element={<AddressStep/>} />
 <Route path="/" element={<Home />} />
@@ -69,6 +87,7 @@ function App() {
          <Route path="/BestsellerAll" element={<BestsellerAll/>}/>
          <Route path="/FishSeafoodAll" element={<FishSeafoodAll/>}/>
         {/* login */}
+        
               <Route path="/Account" element={<Account/>}/>
                <Route path="/Reward" element={<Reward/>}/>
                <Route path="/Wallet" element={<Wallet/>}/>
@@ -78,6 +97,7 @@ function App() {
        </Routes>
     </Router>
   </BannerProvider>  
+  </AuthProvider>
     </>
   );
 }

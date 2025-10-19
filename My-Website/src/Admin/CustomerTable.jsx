@@ -183,6 +183,38 @@ const CustomerTable = () => {
 
     doc.save("customers.pdf");
   };
+const handleDeleteSelected = async () => {
+  if (selectedCustomerIds.length === 0) {
+    alert("No customers selected.");
+    return;
+  }
+
+  if (!window.confirm("Are you sure you want to delete all selected users?")) return;
+
+  try {
+    const deletePromises = selectedCustomerIds.map(id =>
+      fetch(`http://localhost:5000/api/customers/${id}`, {
+        method: "DELETE",
+      })
+    );
+
+    const responses = await Promise.all(deletePromises);
+
+    const hasError = responses.some(res => !res.ok);
+
+    if (hasError) {
+      alert("Some deletions failed. Please try again.");
+    } else {
+      alert("Selected customer deleted successfully.");
+    }
+
+    setSelectedCustomerIds([]); // clear selection
+    fetchUsers(); // refresh the user list
+  } catch (err) {
+    console.error("Bulk delete failed:", err);
+    alert("Bulk delete failed: " + err.message);
+  }
+};
 
   return (
     <>
@@ -222,8 +254,9 @@ const CustomerTable = () => {
         <div>
           <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}><FaFileCsv className="me-1" /></button>
           <button className="btn btn-outline-success me-2" onClick={exportToExcel}><FaFileExcel className="me-1" /></button>
-          <button className="btn btn-outline-danger" onClick={exportToPDF}><FaFilePdf className="me-1" /></button>
-        </div>
+          <button className="btn btn-outline-danger me-2" onClick={exportToPDF}><FaFilePdf className="me-1" /></button>
+           <button className="btn btn-outline-danger " onClick={handleDeleteSelected}><FaTrash className="me-1" /></button>
+           </div>
       </div>
 
       {fetchError && (
@@ -275,8 +308,8 @@ const CustomerTable = () => {
                   {/* <td>{user.password}</td> */}
                   <td>{'*'.repeat(customer.password.length)}</td>
                   <td>
-                    <button className="btn btn-sm btn-success me-2" onClick={() => handleEdit(user)}><FaEdit /></button>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(user._id)}><FaTrash /></button>
+                    <button className="btn btn-sm btn-success me-2" onClick={() => handleEdit(customer)}><FaEdit /></button>
+                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(customer._id)}><FaTrash /></button>
                   </td>
                 </tr>
               ))

@@ -170,9 +170,6 @@ function Kidbreakfast() {
                       <div className="quantity-control">
                         <button className="qty-btn" onClick={() => removeFromCart(product.id)}>−</button>
                         <span className="qty-count">{quantity}</span>
-                        {/* <button className="qty-btn"  */}
-                        {/* // onClick={() => addToCart(product)}>+ */}
-                        {/* </button> */}
                           <button className="qty-btn" onClick={() => addToCart({ ...product, image: product.images[0] })}>+</button>
 
                       </div>

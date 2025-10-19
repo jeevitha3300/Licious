@@ -18,8 +18,7 @@ const AddressStep = () => {
   const { cartItems, calculateSubtotal, removeFromCart, clearCart } = useCart();
   const deliveryCharge = calculateSubtotal() >= 499 ? 0 : 39;
   const total = calculateSubtotal() + deliveryCharge;
-
-  const navigate = useNavigate();
+const navigate = useNavigate();
 
   useEffect(() => {
     const storedAddress = localStorage.getItem('savedAddress');
@@ -196,16 +195,17 @@ const AddressStep = () => {
         )}
 
         {/* PAYMENT STEP */}
-        {currentStep === 'payment' && (
-          <div className="payment-step">
-            {orderSuccess && (
-              <div className="success-message mt-3">
-                ✅ Your order has been placed successfully!
-                <br />
-              </div>
-            )}
-          </div>
-        )}
+    {currentStep === 'payment' && (
+  <div className="payment-step">
+    {orderSuccess && (
+      <div className="success-message mt-3">
+        ✅ Your order has been placed successfully!
+        <br />
+      </div>
+    )}
+  </div>
+)}
+
       </div>
 
       {/* CHECKOUT STEPS TRACKER */}
@@ -262,3 +262,4 @@ const AddressStep = () => {
 };
 
 export default AddressStep;
+

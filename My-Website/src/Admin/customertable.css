@@ -3,7 +3,7 @@
      width: 94%;
 background-color: #bda9ad; 
 max-height:none;
-  min-height: 120vh;
+  min-height: 140vh;
   position: relative;
   top: 63px;
   left:6%;
@@ -70,4 +70,56 @@ padding: 10px 30px 10px 30px;
 .badge.bg-secondary {
   background-color: #dc3545 !important; /* Red for disabled */
   color: #fff;
+}
+.toggle-switch {
+  width: 60px;
+  height: 25px;
+  border-radius: 35px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  padding: 5px;
+  margin: auto;
+}
+
+.toggle-circle {
+  width: 20px;
+  height: 20px;
+  background: #ccc;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* Disabled (red) */
+.toggle-switch.disabled {
+  background-color: #c82333;
+  justify-content: flex-start;
+}
+
+/* Enabled (green) */
+.toggle-switch.enabled {
+  background-color: #218838;
+  justify-content: flex-end;
+}
+
+.toggle-label {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.truncate-text {
+  max-width: 150px; /* adjust based on your table width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.truncate-text1 {
+  max-width: 100px; /* adjust based on your table width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

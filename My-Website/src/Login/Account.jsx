@@ -14,10 +14,20 @@ const Account = () => {
   const user = storedUser ? JSON.parse(storedUser) : {};
 
   // Load order history on component mount
+ 
   useEffect(() => {
-    const orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
-    setOrderHistory(orders);
-  }, []);
+    const fetchOrders = async () => {
+      if (!user._id) return;
+      try {
+        const response = await fetch(`http://localhost:5000/api/order/user/${user._id}`);
+        const data = await response.json();
+        setOrderHistory(data);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+    fetchOrders();
+  }, [user._id]);
 
   const renderContent = () => {
     switch (activeTab) {

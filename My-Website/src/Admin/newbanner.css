@@ -1,40 +1,37 @@
 .newbanner-container {
-   flex:1;
-      width: 92%;
-background-color: #bda9ad;
-   max-height:none;
+  flex: 1;
+  width: 100%;
+  background-color: #bda9ad;
   min-height: 100vh;
   position: relative;
   top: 63px;
- left: 9.5%;
+  overflow-x: hidden; 
 }
+
 .banner-form-container {
-  width: 950px;
-  margin: 50px auto;
-background-color: #fff;
-  padding: 60px 60px;
+  max-width: 950px;
+  width: 90%; 
+  margin: 50px 26%;
+  background-color: #fff;
+  padding: 60px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-       position: relative;
-      top: 5px;
-   left:2.5%;
 }
 .newbannerheader{
-    width: 950px;
-    background: #fff;
-      position: relative;
-      top: 25px;
-   left: 19%;
+     max-width: 950px;
+  width: 90%;
+  background: #fff;
+  margin: 25px 26%; 
    }
 .newform {
-    background-color: #fff;
-    padding: 10px 15px 10px 15px;
-    font-size: 20px;
-    color: #2d2d32;
-    font-weight: 500;
+     background-color: #fff;
+  padding: 10px 15px;
+  font-size: 20px;
+  color: #2d2d32;
+  font-weight: 500;
   }
 .bannername,.bannerimage{
-  width: 50%;
+  width: 100%;
   padding: 10px;
   margin-top: 8px;
   border: 1.5px solid black;
@@ -48,7 +45,7 @@ form label {
 .form-buttons {
   margin-top: 25px;
   position: relative;
-  left: 29%;
+  left: 39%;
 }
 .cancelbtn {
  padding: 8px 20px;
@@ -66,3 +63,19 @@ form label {
    border-radius: 25px;
    margin: 3px;
 } 
+.categoryX {
+background-color: #D11243;
+border: none;
+color: #fff;
+padding: 3px 10px ;
+border-radius: 15px;
+}
+
+.addsub{
+     background-color: #198754;
+  font-size: 14px;
+  padding: 10px 10px;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+}

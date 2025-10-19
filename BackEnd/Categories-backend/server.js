@@ -1,88 +1,4 @@
-// --------------banner-------cutomersay-------------------
-// {
-//   "image": "http://localhost:5000/uploads/banner3.png"
-// }
-// ----------flavour-----bestselelr--------premiumfood-----
-  // {
-  //   "category": "Meals in Minutes",
-  //   "subcategory": "Chicken Snacks",
-  //   "id": "Favour1",
-  //   "name": "Crispy Chicken Nuggets",
-  //   "desc": "12 pieces",
-  //   "weight": "250g",
-  //   "price": 210,
-  //   "offerPrice": 189,
-  //   "discount": "10% off",
-  //   "time": "Today 2PM - 5PM",
-  //   "images": ["http://localhost:5000/uploads/fav1.webp"]
-  // }
-// ----------subcategories-------------
-// // {
-// //   "category": "kidevening",
-// //   "subcategory":"kidevening",
-// //   "id": "Crispy Chicken Nuggets",
-// //   "name": "Crispy Chicken Nuggets",
-// //   "desc": "Juicy & meaty snack for your kiddos even",
-// //   "weight": "250 g | 12 Pieces | Serves 3-4",
-// //   "price": 210,
-// //   "offerPrice": 189,
-// //   "discount": "8% off",
-// //   "time": "Today 2PM - 5P",
-// //   "images": ["http://localhost:5000/uploads/eveningA1.wepb",
-// //     "http://localhost:5000/uploads/eveningA2.wepb",
-// //     "http://localhost:5000/uploads/eveningA3.wepb",
-// //     "http://localhost:5000/uploads/eveningAa.wepb"
-// // ]
-// // }
-//----------------------categories------------
-// {
-//     "id": "shopcategory1",
-//     "title": "Kidsfavourite",
-//     "image": "http://localhost:5000/uploads/shopimg1.png"
-//   }
-// ------------headcategory------------------
-// {
-//   "id": "shopcategory2",
-//   "breadcrumb": ["Home", "Daily Fish delights"],
-//   "heading": "Daily Fish Delights",
-//   "carouselImages": [
-//     {
-//       "src": "http://localhost:5000/uploads/kidsbanner1.png",
-//       "alt": "Banner 1"
-//     },
-//     {
-//       "src": "http://localhost:5000/uploads/kidsbanner2.png",
-//       "alt": "Banner 2"
-//     }
-//   ],
-//   "categories": [
-//     {
-//       "key": "all",
-//       "image": "http://localhost:5000/uploads/kidAll.webp",
-//       "alt": "All",
-//       "label": "All"
-//     },
-//     {
-//       "key": "evening",
-//       "image": "http://localhost:5000/uploads/kidsnacks.webp",
-//       "alt": "Evening Snacks",
-//       "label": "Evening Snacks"
-//     },
-//     {
-//       "key": "breakfast",
-//       "image": "http://localhost:5000/uploads/kidbreakfast.webp",
-//       "alt": "Breakfast Staples",
-//       "label": "Breakfast Staples"
-//     },
-//     {
-//       "key": "yummy",
-//       "image": "http://localhost:5000/uploads/kidyummy.webp",
-//       "alt": "Yummy Tiffins",
-//       "label": "Yummy Tiffins"
-//     }
-//   ]
-// }
-// ===============================================================================================================
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -90,16 +6,17 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 // Models
-const Product = require('./models/Product');            // Regular product
-const HeadProduct = require('./models/headproduct');    // Head document
-const Category = require('./models/categoryproduct');   // Categories
+const Product = require('./models/Product');    
+const Category = require('./models/category');   // Categories
 const Banner   =require('./models/banner')              // banner
 const Flavour = require('./models/flavour');            //flavour
 const Bestseller=require('./models/bestseller')         //bestseller
 const CustomerSay=require('./models/customersay')       //customersay
 const Premiumfood=require('./models/premiumfood')       //premiumfood
 const Customer=require('./models/customer')
-const User=require('./models/user')
+const User=require('./models/user');
+const Order=require ('./models/order')
+
 
 
 const app = express();
@@ -193,6 +110,17 @@ app.put('/api/customers/:id', async (req, res) => {
 // Create User
 app.post('/api/manageuser', async (req, res) => {
   try {
+    const { email, contact,password } = req.body;
+
+    // Check for duplicates
+    const existingUser = await User.findOne({
+      $or: [{ email }, { contact },{password}]
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email or Contact or password already exists" });
+    }
+
     const newUser = new User(req.body);
     await newUser.save();
     res.status(201).json(newUser);
@@ -200,227 +128,375 @@ app.post('/api/manageuser', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 // Get all users
 app.get('/api/manageuser', async (req, res) => {
   try {
      const users = await User.find().sort({ id: -1 }); 
     res.json(users);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // Update user
+
 app.put('/api/manageuser/:id', async (req, res) => {
   try {
+    const { email, contact ,password} = req.body;
+
+    // Check if another user has same email or contact
+    const existingUser = await User.findOne({
+      $or: [{ email }, { contact },{password}],
+      _id: { $ne: req.params.id } // exclude current user
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email or Contact already exists" });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json({ message: "User updated", updatedUser });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 // Delete user
 app.delete('/api/manageuser/:id', async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User deleted" });
   } catch (err) {
+     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
-// ------------------------------Products----------------------------
-// POST route - Create product with image upload
-app.post('/api/products', upload.array('images', 5), async (req, res) => {
+// ----Banner--------------------
+// POST /api/banner
+app.post("/api/banner", async (req, res) => {
   try {
-    const imagePaths = req.files.map(file => `http://localhost:${PORT}/uploads/${file.filename}`);
+    const { name, image, type, enabled } = req.body;
 
-    const newProduct = new Product({
-      ...req.body,
-      images: imagePaths,
+    let newBanner = new Banner({ name, image, type, enabled });
+
+    if (type === "home" && enabled) {
+      // Disable all other home banners before saving
+      await Banner.updateMany({ type: "home", enabled: true }, { enabled: false });
+    }
+
+    await newBanner.save();
+    res.status(201).json(newBanner);
+  } catch (err) {
+    console.error("Error adding banner:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// ✅ Get all banners
+app.get("/api/banner", async (req, res) => {
+  try {
+    const banners = await Banner.find();
+    res.json(banners);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch banners" });
+  }
+});
+// Backend: GET /api/banner/category/:categoryName
+app.get("/api/banner/category/:categoryName", async (req, res) => {
+  const normalized = req.params.categoryName.toLowerCase().replace(/\s+/g, '').trim();
+  try {
+    const banners = await Banner.find({
+      type: 'category',
+      enabled: true,
     });
 
-    const savedProduct = await newProduct.save();
-    res.status(201).json(savedProduct);
+    const filtered = banners.filter(b =>
+      b.name.toLowerCase().replace(/\s+/g, '').trim() === normalized
+    );
+
+    res.json(filtered);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Failed to add product' });
+    res.status(500).json({ message: "Failed to fetch banners" });
   }
 });
-// Products endpoint with filtering
-app.get('/api/products', async (req, res) => {
-  const { category, subcategory } = req.query;
 
-  if (!category) {
-    return res.status(400).json({ error: 'Category is required' });
-  }
-
-  const filter = { category };
-
-  if (subcategory && subcategory !== 'all') {
-    filter.subcategory = subcategory;
-  }
-
+// ✅ Get banners by type (home/category)
+app.get("/api/banner/:type", async (req, res) => {
   try {
-    const products = await Product.find(filter).lean();
-    res.json(products);
+    const { type } = req.params;
+    const banners = await Banner.find({ type });
+    res.json(banners);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: "Failed to fetch banners" });
   }
 });
-// GET route - Retrieve head document
-app.get('/api/head/:id', async (req, res) => {
+
+// ✅ Update banner
+app.put("/api/banner/:id", async (req, res) => {
   try {
-    const doc = await HeadProduct.findOne({ id: req.params.id }); 
-    if (!doc) {
-      return res.status(404).json({ message: 'No head document found' });
+    const { name, type, image } = req.body;
+    const updatedBanner = await Banner.findByIdAndUpdate(
+      req.params.id,
+      { name, type, image },
+      { new: true }
+    );
+    if (!updatedBanner) {
+      return res.status(404).json({ message: "Banner not found" });
     }
-    res.json(doc);
+    res.json(updatedBanner);
   } catch (err) {
-    console.error('Error fetching head data:', err);
-    res.status(500).json({ message: 'Failed to fetch head data' });
+    res.status(500).json({ message: err.message });
   }
 });
+//toggle
+app.put("/api/banner/:id/toggle", async (req, res) => {
+  try {
+    const banner = await Banner.findById(req.params.id);
+    if (!banner) return res.status(404).json({ message: "Banner not found" });
+
+    if (!banner.enabled) {
+      // Turning ON
+      if (banner.type === "home") {
+        // Disable all other enabled home banners
+        await Banner.updateMany({ type: "home", enabled: true }, { enabled: false });
+      }
+      banner.enabled = true;
+    } else {
+      // Turning OFF
+      banner.enabled = false;
+    }
+
+    await banner.save();
+    res.json(banner);
+  } catch (err) {
+    res.status(500).json({ message: "Toggle error", error: err.message });
+  }
+});
+
+// ✅ Delete banner
+app.delete("/api/banner/:id", async (req, res) => {
+  try {
+    const deleted = await Banner.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Banner not found" });
+    res.json({ message: "Banner deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 // ----------------categories------------------
-// GET route - Retrieve categories
+//create category
+app.post('/api/categories', async (req, res) => {
+  try {
+    const { category, image, subcategories } = req.body;
+    if (!category || !image || !subcategories?.length) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+    const newCategory = new Category({ category, image, subcategories });
+    const savedCategory = await newCategory.save();
+    res.status(201).json(savedCategory);
+  } catch (err) {
+    console.error('Error creating category:', err);
+    res.status(500).json({ message: 'Failed to create category', error: err.message });
+  }
+});
+
+// GET ALL CATEGORIES
 app.get('/api/categories', async (req, res) => {
   try {
     const categories = await Category.find();
-    if (!categories || categories.length === 0) {
-      return res.status(404).json({ message: 'No categories found' });
-    }
     res.json(categories);
   } catch (err) {
-    console.error('Error fetching categories data:', err);
-    res.status(500).json({ message: 'Failed to fetch categories data' });
-  }
-});
-// ----Banner--------------------
-// Create banner
-app.post('/api/banner', async (req, res) => {
-  try {
-    const { name, image } = req.body;
-    const newBanner = new Banner({ name, image, enabled: true });
-    await newBanner.save();
-    res.status(201).json(newBanner);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error saving banner' });
+    console.error('Error fetching categories:', err);
+    res.status(500).json({ message: 'Failed to fetch categories' });
   }
 });
 
-// Get all banners
-app.get('/api/banner', async (req, res) => {
+// GET ENABLED CATEGORIES
+app.get('/api/categories/enabled', async (req, res) => {
   try {
-    const banners = await Banner.find();
-    if (!banners.length) {
-      return res.status(404).json({ message: 'No banners found' });
-    }
-    res.json(banners);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to fetch banners' });
+    const categories = await Category.find({ enabled: true });
+    res.json(categories);
+  } catch (err) {
+    console.error('Error fetching enabled categories:', err);
+    res.status(500).json({ message: 'Failed to fetch enabled categories' });
   }
 });
 
-// Update banner (name or image)
-app.put('/api/banner/:id', async (req, res) => {
+// GET SINGLE CATEGORY BY ID
+app.get('/api/categories/:id', async (req, res) => {
   try {
-    const updatedBanner = await Banner.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    const { id } = req.params;
+    const category = await Category.findById(id);
+    if (!category) return res.status(404).json({ message: 'Category not found' });
+    res.json(category);
+  } catch (err) {
+    console.error('Error fetching category:', err);
+    res.status(500).json({ message: 'Failed to fetch category', error: err.message });
+  }
+});
+
+// UPDATE CATEGORY
+app.put('/api/categories/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { category, image, subcategories, enabled } = req.body;
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id,
+      { category, image, subcategories, enabled },
+      { new: true, runValidators: true }
     );
-    res.json(updatedBanner);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update banner' });
+    if (!updatedCategory) return res.status(404).json({ message: 'Category not found' });
+    res.json(updatedCategory);
+  } catch (err) {
+    console.error('Error updating category:', err);
+    res.status(500).json({ message: 'Failed to update category' });
   }
 });
 
-// Toggle banner's enabled status
-app.put('/api/banner/:id/toggle', async (req, res) => {
+// TOGGLE CATEGORY ENABLED STATUS
+app.put('/api/categories/:id/toggle', async (req, res) => {
   try {
-    const banner = await Banner.findById(req.params.id);
-    if (!banner) {
-      return res.status(404).json({ message: 'Banner not found' });
+    const { id } = req.params;
+    const categoryDoc = await Category.findById(id);
+    if (!categoryDoc) return res.status(404).json({ message: 'Category not found' });
+
+    categoryDoc.enabled = !categoryDoc.enabled;
+    await categoryDoc.save();
+    res.json(categoryDoc);
+  } catch (err) {
+    console.error('Toggle error:', err);
+    res.status(500).json({ message: 'Failed to toggle category status' });
+  }
+});
+
+// DELETE CATEGORY
+app.delete('/api/categories/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Category.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ message: 'Category not found' });
+    res.json({ message: 'Category deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting category:', err);
+    res.status(500).json({ message: 'Failed to delete category' });
+  }
+});
+
+// ---------------------Products----------------------
+app.post('/api/products', upload.array('images', 10), async (req, res) => {
+  try {
+    const { name, category, subcategory, desc, weight, price, offerPrice, enabled } = req.body;
+    const images = req.files.map(file => `/uploads/${file.filename}`);
+
+    const newProduct = new Product({
+      name,
+      category,
+      subcategory, // store subcategory name directly
+      desc,
+      weight,
+      price,
+      offerPrice,
+      images,
+      enabled: enabled !== undefined ? enabled : true,
+    });
+
+    await newProduct.save();
+    res.status(201).json(newProduct);
+  } catch (err) {
+    console.error('Error creating product:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// UPDATE PRODUCT
+app.put('/api/products/:id', upload.array('images', 10), async (req, res) => {
+  try {
+    const { name, category, subcategory, desc, weight, price, offerPrice, enabled } = req.body;
+
+    let updatedData = {
+      name,
+      category,
+      subcategory,
+      desc,
+      weight,
+      price,
+      offerPrice,
+      enabled: enabled !== undefined ? enabled : true,
+    };
+
+    if (req.files && req.files.length > 0) {
+      updatedData.images = req.files.map(file => `/uploads/${file.filename}`);
     }
-    banner.enabled = !banner.enabled;
-    await banner.save();
-    res.json(banner);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to toggle banner status' });
+
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+    if (!updatedProduct) return res.status(404).json({ message: 'Product not found' });
+
+    res.json(updatedProduct);
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ message: 'Update failed' });
   }
 });
 
-// Delete banner
-app.delete('/api/banner/:id', async (req, res) => {
+// GET ALL PRODUCTS
+app.get('/api/products', async (req, res) => {
   try {
-    await Banner.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Banner deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to delete banner' });
+    const products = await Product.find()
+      .populate('category', 'category')
+      .sort({ createdAt: -1 });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// GET SINGLE PRODUCT
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate('category', 'category');
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    console.error('Error fetching product:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE PRODUCT
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'Product not found' });
+    res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    res.status(500).json({ message: 'Delete failed' });
+  }
+});
+
+// Toggle product enabled/disabled
+app.put('/api/products/:id/toggle', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    product.enabled = !product.enabled;
+    await product.save();
+    res.json({ enabled: product.enabled });
+  } catch (err) {
+    console.error('Error toggling product status:', err);
+    res.status(500).json({ message: 'Toggle failed' });
   }
 });
 
 
 
-// // POST add banner
-// app.post('/api/banner', async (req, res) => {
-//   try {
-//     const { name, image } = req.body;
-//     const newBanner = new Banner({ name, image });
-//     await newBanner.save();
-//     res.status(201).json(newBanner);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Error saving banner' });
-//   }
-// });
-// app.get('/api/banner', async (req, res) => {
-//   try {
-//     const banners = await Banner.find();
-//     if (!banners || banners.length === 0) {
-//       return res.status(404).json({ message: 'No banners found' });
-//     }
-//     res.json(banners);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Failed to fetch banners' });
-//   }
-// });
 
-// // PUT update banner (name or enabled)
-// app.put('/api/banner/:id', async (req, res) => {
-//   try {
-//     const updatedBanner = await Banner.findByIdAndUpdate(
-//       req.params.id,
-//       { $set: req.body },
-//       { new: true }
-//     );
-//     res.json(updatedBanner);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Failed to update banner' });
-//   }
-// });
-
-// // DELETE banner
-// app.delete('/api/banner/:id', async (req, res) => {
-//   try {
-//     await Banner.findByIdAndDelete(req.params.id);
-//     res.json({ message: 'Banner deleted successfully' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Failed to delete banner' });
-//   }
-// });
-
-
+// ===========================================
 // API Route to get cutomersay
 app.get('/api/customersay', async (req, res) => {
   try {
@@ -465,6 +541,56 @@ app.get('/api/premiumfood', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch premiumfood' });
   }
 });
+// Example: login route for admin users
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+try {
+    const user = await User.findOne({ username });
+if (!user) {
+      return res.status(401).json({ message: 'Invalid username or password.' });
+    }
+
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Invalid username or password.' });
+    }
+
+    // Return some user data (not password)
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      designation: user.designation,
+      permissions: user.permissions
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+// =================================
+// ✅ Create new order
+app.post("/api/order", async (req, res) => {
+  try {
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+    res.status(201).json({ message: "Order placed successfully", order: newOrder });
+  } catch (err) {
+    console.error("Order Save Error:", err);
+    res.status(500).json({ message: "Failed to save order" });
+  }
+});
+
+// ✅ Fetch orders by userId
+app.get("/api/order/user/:userId", async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.error("Fetch Orders Error:", err);
+    res.status(500).json({ message: "Error fetching orders" });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
