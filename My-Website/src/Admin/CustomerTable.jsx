@@ -17,6 +17,7 @@ const CustomerTable = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+  const [passwordVisibility, setPasswordVisibility] = useState({});
 
   const fetchCustomers = async () => {
     try {
@@ -189,9 +190,10 @@ const handleDeleteSelected = async () => {
     return;
   }
 
-  if (!window.confirm("Are you sure you want to delete all selected users?")) return;
+  if (!window.confirm("Are you sure you want to delete all selected customers?")) return;
 
   try {
+    // Delete all selected customers in parallel
     const deletePromises = selectedCustomerIds.map(id =>
       fetch(`http://localhost:5000/api/customers/${id}`, {
         method: "DELETE",
@@ -200,22 +202,30 @@ const handleDeleteSelected = async () => {
 
     const responses = await Promise.all(deletePromises);
 
-    const hasError = responses.some(res => !res.ok);
+    // Check if any failed
+    const failed = responses.filter(res => !res.ok);
 
-    if (hasError) {
-      alert("Some deletions failed. Please try again.");
+    if (failed.length > 0) {
+      alert(`${failed.length} deletions failed. Please try again.`);
     } else {
-      alert("Selected customer deleted successfully.");
+      alert("Selected customers deleted successfully.");
     }
 
-    setSelectedCustomerIds([]); // clear selection
-    fetchUsers(); // refresh the user list
+    // ✅ Clear selection and refresh the table
+    setSelectedCustomerIds([]);
+    fetchCustomers(); // <-- fixed from fetchUsers() to fetchCustomers()
   } catch (err) {
     console.error("Bulk delete failed:", err);
     alert("Bulk delete failed: " + err.message);
   }
 };
 
+  const togglePasswordVisibility = (customerId) => {
+  setPasswordVisibility(prev => ({
+    ...prev,
+    [customerId]: !prev[customerId],
+  }));
+};
   return (
     <>
     <AdminHeader/>
@@ -255,7 +265,9 @@ const handleDeleteSelected = async () => {
           <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}><FaFileCsv className="me-1" /></button>
           <button className="btn btn-outline-success me-2" onClick={exportToExcel}><FaFileExcel className="me-1" /></button>
           <button className="btn btn-outline-danger me-2" onClick={exportToPDF}><FaFilePdf className="me-1" /></button>
-           <button className="btn btn-outline-danger " onClick={handleDeleteSelected}><FaTrash className="me-1" /></button>
+           <button className="btn btn-outline-danger " onClick={handleDeleteSelected}  
+  disabled={selectedCustomerIds.length === 0}
+  title={selectedCustomerIds.length === 0 ? "Select customers first" : "Delete selected"}><FaTrash className="me-1" /></button>
            </div>
       </div>
 
@@ -305,8 +317,21 @@ const handleDeleteSelected = async () => {
                   <td>{customer.mobile}</td>
                   <td>{customer.email}</td>
                   <td>{customer.city}</td>
-                  {/* <td>{user.password}</td> */}
-                  <td>{'*'.repeat(customer.password.length)}</td>
+                
+                  {/* <td>{'*'.repeat(customer.password.length)}</td> */}
+                        <td>
+                          <input
+                            type={passwordVisibility[customer._id] ? "text" : "password"}
+                            value={customer.password}
+                            readOnly
+                            style={{ border: "none", background: "transparent", width: "100px" }}/>
+                            <button
+                             onClick={() => togglePasswordVisibility(customer._id)}
+                             className="btn btn-sm btn-link"
+                             type="button">
+                             {passwordVisibility[customer._id] ? "🙈" : "👁️"}
+                            </button>
+                            </td>
                   <td>
                     <button className="btn btn-sm btn-success me-2" onClick={() => handleEdit(customer)}><FaEdit /></button>
                     <button className="btn btn-sm btn-danger" onClick={() => handleDelete(customer._id)}><FaTrash /></button>

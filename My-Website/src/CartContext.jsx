@@ -24,10 +24,11 @@ export const CartProvider = ({ children }) => {
       const existingItem = prev[item.id];
       const updatedItem = existingItem
         ? { ...existingItem, quantity: existingItem.quantity + 1 }
-        : { ...item, quantity: 1 };
+        : { ...item, quantity: 1 ,  weight: item.weight || "Not specified",};
       return { ...prev, [item.id]: updatedItem };
     });
   };
+
 
   const removeFromCart = (itemId) => {
     setCartItems((prev) => {
@@ -57,7 +58,7 @@ export const CartProvider = ({ children }) => {
 
   const calculateSubtotal = () => {
     return Object.values(cartItems).reduce(
-      (total, item) => total + item.offerPrice * item.quantity,
+      (total, item) => total + item.offerPrice * item.quantity ,
       0
     );
   };
@@ -73,7 +74,7 @@ export const CartProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         deleteFromCart,
-        clearCart, // ✅ Added here
+        clearCart, //  Added here
         calculateSubtotal,
         getTotalQuantity,
       }}
@@ -82,4 +83,5 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
 

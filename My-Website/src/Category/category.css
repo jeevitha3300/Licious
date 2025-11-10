@@ -1,4 +1,11 @@
-
+ .categorycontainer {
+   padding: 20px 0px 10px 0px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 -3px 0px 0 rgba(1, 0, 0, 0.1);
+    position: sticky;
+    top: 10.8%;
+    z-index: 59;
+}
 .breadcrumb:hover{
   color: #d11243;
 }
@@ -14,40 +21,49 @@
     color: #0d0d0e;
     font-weight:500;
 }
- .categorycontainer {
-   padding: 20px 0px 10px 0px;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 -3px 0px 0 rgba(1, 0, 0, 0.1);
+
+.catogoryhead2 {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 1rem;
+  background-color: inherit;
+  scrollbar-width: none;
     position: sticky;
     top: 10.8%;
     z-index: 59;
 }
-.categorybanner1{
-  margin-left:14%;
-width: 71%;
+.catogoryhead2::-webkit-scrollbar {
+  display: none;
 }
-.categorybannerimg{
-  width: 100%;
-  object-fit: cover;
-}
-.catogoryhead2{
-  height: 146px;
-}
-
 .imgcategory{ 
-  width: 90px;
-    height: 60px;
-    border-radius: 70%;
+ width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
 }
  .imgcategorydiv{
   position: relative;
   left: 13.5%;
+
+  display: inline-block;
+  text-align: center;
+  margin-right: 20px;
+  flex: 0 0 auto;
+  cursor: pointer;
+
+
 }
  .subimg {
   margin-right: 50px;
+    display: flex;
+  flex-direction: column;
+  align-items: center;
  }
  .subname{
-text-align: center;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 5px;
  }
  
 .breakfast-text{
@@ -90,6 +106,7 @@ line-height: 16.8px;
 
   font-size: 14px;
 }
+
 .breakfast-time {
 font-size: 10px;
   color: #6c757d;
@@ -124,4 +141,130 @@ font-size: 10px;
   width: 92%;
   margin-left: 7%;
 }
+.addbtn,
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  width: 70px;
+  height: 30px;
+}
+.addbtn{
+  background-color:#d11243;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  position: relative;
+  left: 76%;
+  bottom: 40px;
+} 
+ .quantity-control {
+  gap: 4px;
+border: 1px solid #ccc;
+  background: #fff;
+    position: relative;
+    left: 76%;
+    bottom: 40px;
+}
+.qty-btn{
+  background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #D11243;
+    cursor: pointer;
+      width: 26px;
+  height: 26px;
+  line-height: 1;
+}
+.qty-count {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  padding: 3px 0px;
+  min-width: 20px;
+  text-align: center;
+      background: #eee
+}
+@media (max-width: 320px) {
+.categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 2%;width: 97%;}
+.breadcrumb{margin: 0px 0px 0px 4%;}
+.breadcrumb1{ margin: 0px 0px 16px 4%; }
+.imgcategorydiv{width: 40%;margin: 0px 20% 0px -15%;}
+ .imgcategory{ width: 70px; height:70px; border-radius: 50%; object-fit: cover;}
+.subimg{width: 100px;}
+.breakfasthead {width: 98%; margin-left: 1%;}
+.breakfasthead1{width: 100%;}
+}
+@media (min-width: 321px) and (max-width: 428px) {
+  .categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 2%;width: 97%;}
+.breadcrumb{margin: 0px 0px 0px 4%;}
+.breadcrumb1{ margin: 0px 0px 16px 4%; }
+.imgcategorydiv{width: 40%;margin: 0px 20% 0px -15%;}
+ .imgcategory{ width: 70px; height:70px; border-radius: 50%; object-fit: cover;}
+.subimg{width: 100px;}
+.breakfasthead {width: 98%; margin-left: 1%;}
+.breakfasthead1{width: 100%;}
+}
+@media (min-width: 429px) and (max-width: 768px) {
+   .categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 3%;width: 94%;} 
+.breadcrumb{margin: 0px 0px 0px 4%;}
+.breadcrumb1{ margin: 0px 0px 16px 4%; }
+.imgcategorydiv{width: 19%;margin: 0px 15% 0px -13%;}
+ .imgcategory{ width: 90px; height:90px; border-radius: 50%; object-fit: cover;}
+.breakfasthead {width: 108%; margin-left: -3%;}
+.breakfasthead1{width: 32%;}
+.addbtn,
+.quantity-control {width: 60px;height: 30px;}
+.breakfast-text1 {white-space: nowrap;overflow: hidden;text-overflow: ellipsis;    }
+}
+@media (min-width:767.2px)and (max-width: 767.8px) {
+   .categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 18%;width: 78%;} 
+.breadcrumb{margin: 0px 0px 0px 18%;}
+.breadcrumb1{ margin: 0px 0px 16px 18%; }
+.imgcategorydiv{width: 15%;margin: 0px 0% 0px 4%;}
+ .imgcategory{ width: 90px; height:90px; border-radius: 50%; object-fit: cover;}
+.breakfasthead {width: 120%; margin-left: 0%;}
+.breakfasthead1{width: 32%;}
+.addbtn,.quantity-control {width: 52px;height: 30px;}
+.breakfast-text1,.breakfast-text {white-space: nowrap;overflow: hidden;text-overflow: ellipsis;    }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+.categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 0%;width: 100%;} 
+.breadcrumb{margin: 0px 0px 0px 0%;}
+.breadcrumb1{ margin: 0px 0px 16px 0%;}
+.imgcategorydiv{width: 21%;margin: 0px 20% 0px -18%;}
+ .imgcategory{ width: 100px; height:100px; border-radius: 50%; object-fit: cover;}
+ .breakfasthead {width: 108%; margin-left: -3%;}
+.breakfasthead1{width: 32%;}}
 
+@media (min-width: 1025px) and (max-width: 1440px){
+  .categorybannerimg {width: 100%;height: 50px;}
+.categorybanner1 {margin-left: 12%;width: 75%;} 
+.breadcrumb{margin: 0px 0px 0px 12%;}
+.breadcrumb1{ margin: 0px 0px 16px 12%; }
+.imgcategorydiv{width: 10%;margin: 0px 7% 0px -3%;}
+ .imgcategory{ width: 100px; height:100px; border-radius: 50%; object-fit: cover;}
+}
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .categorybanner1 {margin-left: 14%;width: 73%;} 
+  .categorybannerimg {width: 96%;height:50px;}
+  .imgcategorydiv{position: relative;left: 13%;}
+.imgcategory{ width: 90px; height:90px; border-radius: 50%; object-fit: cover;}
+}
+@media (min-width: 1921px) and (max-width: 2560px) {
+  .breadcrumb{margin: 0px 0px 0px 29%;}
+.breadcrumb1{ margin: 0px 0px 16px 29%; }
+  .categorybanner1 {margin-left: 29%;width: 43.5%;} 
+  .categorybannerimg {width: 96%;height:60px;}
+  .imgcategorydiv{position: relative;left: 29%;}
+  .imgcategory{ width: 100px; height:100px; border-radius: 50%; object-fit: cover;}
+}

@@ -37,6 +37,8 @@ import ManageCategory from './Admin/ManageCategory.jsx';
 import NewProduct from './Admin/NewProduct.jsx';
 import ManageProduct from './Admin/ManageProduct.jsx';
 import AddressStep from './Header/AddressStep.jsx';
+import OrderTable from './Admin/Ordertable.jsx';
+import Search from './Header/search.jsx';
 
 function Home() {
  return (
@@ -45,10 +47,10 @@ function Home() {
       <Banner />
       < Bestseller/>
       <ShopCategory/>
-     {/* <FishSeafood/> */}
-       {/* <Flavour/> */}
-        {/* <Customersay/> */}
-       {/* <Promise/> */}
+     <FishSeafood/>
+       <Flavour/>
+        <Customersay/>
+       <Promise/>
 
  </>
   );
@@ -59,6 +61,7 @@ function App() {
      <AuthProvider>
   <BannerProvider>
     <Router>
+        
     <Routes>
       <Route path="/Admin" element={<AdminLogin/>} />
             {/* <Route path="/dashboard" element={<Dashboard />} />
@@ -78,11 +81,14 @@ function App() {
              <Route path="/managecategory" element={<ProtectedRoute><ManageCategory /></ProtectedRoute>} />
                 <Route path="/newproduct" element={<ProtectedRoute><NewProduct/></ProtectedRoute>} />
              <Route path="/manageproduct" element={<ProtectedRoute><ManageProduct/></ProtectedRoute>} />
+             <Route path="/orders" element={<ProtectedRoute><OrderTable/></ProtectedRoute>} />
+            
  <Route path="/category/:id" element={<Category />} />
 <Route path="/checkout" element={<AddressStep/>} />
 <Route path="/" element={<Home />} />
         <Route path="/location" element={<Location />} />
-        <Route path="/categories" element={<ShopCategory />} />
+        {/* <Route path="/categories" element={<ShopCategory />} /> */}
+          <Route path="/search" element={<Search />} />
         <Route path="/FlavourAll" element={<FlavourAll/>}/>
          <Route path="/BestsellerAll" element={<BestsellerAll/>}/>
          <Route path="/FishSeafoodAll" element={<FishSeafoodAll/>}/>

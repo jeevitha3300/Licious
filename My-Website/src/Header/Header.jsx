@@ -11,7 +11,7 @@ import chevron from '../assets/images/chevron.svg';
 import Location from '../Location/Location';
 import Drop from '../Category dropdown/Drop';
 import Login from '../Login/Login';
-import { useCart } from '../CartContext';
+import {useCart} from '../CartContext'
 
 function Header() {
   const { cartItems, addToCart, removeFromCart,deleteFromCart, getTotalQuantity } = useCart();
@@ -59,7 +59,7 @@ function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLocationPopup, showCategoryPopup]);
 
-  const handleSearchClick = () => navigate('/categories');
+  const handleSearchClick = () => navigate('/search');
 
 
 

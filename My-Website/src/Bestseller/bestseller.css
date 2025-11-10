@@ -2,21 +2,18 @@
   margin-left: 13%;
   width: 72%;
 }
-
 .Bestseller-slider {
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 10px 0;
 }
-
 .Bestseller-card {
   min-width: 245px;
   max-width: 245px;
   flex-shrink: 0;
   border-radius: 10px;
 }
-
 .besttextf1 {
   font-size: 20px;
   color: #0d0d0e;
@@ -219,9 +216,16 @@
   .besttextf1 { font-size: 16px; }
   .arrow { display: none; }
 }
-
+@media (min-width:767.2px)and (max-width: 767.8px) {
+  .Bestsellerhead { margin-left: 18%; width: 65%; }
+  .Bestseller-slider { gap: 15px; padding: 5px 0; }
+  .Bestseller-card { min-width: 150px; max-width: 150px; }
+  .add-btn { position: relative; left:85%; top: 88%; }
+  .besttextf1 { font-size: 16px; }
+  .arrow { display: none; }
+}
 /* Tablet (769px – 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (min-width: 770px) and (max-width: 1024px) {
   .Bestsellerhead { margin-left: 5%; width: 90%; }
   .Bestseller-card { min-width: 240px; max-width: 240px; }
   .besttextf1 { font-size: 18px; }
@@ -247,5 +251,4 @@
    .Bestsellerhead { margin-left: 28%; width: 43%; }
   .Bestseller-card { min-width: 220px; max-width: 220px; }
   .outside-left{margin: 54px 0px 0px -5px;}
-.outside-right{margin: 33px -17px 0px 0px;}
-}
+.outside-right{margin: 33px -17px 0px 0px;}}

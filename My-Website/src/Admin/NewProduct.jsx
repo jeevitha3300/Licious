@@ -19,7 +19,7 @@ const NewProduct = () => {
     offerPrice: '',
     images: [''],
   });
-
+const [discount, setDiscount] = useState(0); 
   const [message, setMessage] = useState('');
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -31,7 +31,16 @@ const NewProduct = () => {
       .then(data => setCategories(data))
       .catch(err => console.error("Error fetching categories:", err));
   }, []);
-
+  // ✅ Auto calculate discount when price or offerPrice changes
+  useEffect(() => {
+    const { price, offerPrice } = formData;
+    if (price && offerPrice && parseFloat(price) > 0) {
+      const discountValue = (((price - offerPrice) / price) * 100).toFixed(1);
+      setDiscount(discountValue);
+    } else {
+      setDiscount(0);
+    }
+  }, [formData.price, formData.offerPrice]);
   // Prefill if editing
   useEffect(() => {
     if (editData) {
@@ -69,63 +78,123 @@ const NewProduct = () => {
     else setSubcategories([]);
   };
 
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   const isEdit = !!editData;
+//   const url = isEdit
+//     ? `http://localhost:5000/api/products/${formData._id}`
+//     : `http://localhost:5000/api/products`;
+//   const method = isEdit ? 'PUT' : 'POST';
+
+//   try {
+//     const formDataToSend = new FormData();
+//     for (const key in formData) {
+//       if (key === "images") {
+//         formData.images.forEach((file) => {
+//           if (file instanceof File) formDataToSend.append("images", file);
+//         });
+//       } else {
+//         formDataToSend.append(key, formData[key]);
+//       }
+//     }
+//  // ✅ Append calculated discount to FormData
+//       formDataToSend.append("discount", discount);
+//     const res = await fetch(url, { method, body: formDataToSend });
+//     const data = await res.json();
+
+//     if (res.ok) {
+//       setMessage(isEdit ? "Product updated successfully!" : "Product created successfully!");
+
+//       // If creating a new product, reset the form
+//       if (!isEdit) {
+//         setFormData({
+//           name: "",
+//           desc: "",
+//           category: "",
+//           subcategory:"",
+//           price: "",
+//           offerPrice: "",
+//           weight: "",
+//           // pieces: "",
+//            discount:"",
+//           availability: true,
+//           images: [""],
+//         });
+//       }
+
+//       // Delay redirect (for edit) or clear message (for create)
+//       setTimeout(() => {
+//         setMessage("");
+//         if (isEdit) navigate("/manageproduct");
+//       }, 2000);
+//     } else {
+//       setMessage(`Error: ${data.message || "Failed to save."}`);
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     setMessage("Server error. Try again.");
+//   }
+// };
 const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const isEdit = !!editData;
-  const url = isEdit
-    ? `http://localhost:5000/api/products/${formData._id}`
-    : `http://localhost:5000/api/products`;
-  const method = isEdit ? 'PUT' : 'POST';
+    const isEdit = !!editData;
+    const url = isEdit
+      ? `http://localhost:5000/api/products/${formData._id}`
+      : `http://localhost:5000/api/products`;
+    const method = isEdit ? 'PUT' : 'POST';
 
-  try {
-    const formDataToSend = new FormData();
-    for (const key in formData) {
-      if (key === "images") {
-        formData.images.forEach((file) => {
-          if (file instanceof File) formDataToSend.append("images", file);
-        });
+    try {
+      const formDataToSend = new FormData();
+
+      // Append fields
+      for (const key in formData) {
+        if (key === "images") {
+          formData.images.forEach((file) => {
+            if (file instanceof File) formDataToSend.append("images", file);
+          });
+        } else {
+          formDataToSend.append(key, formData[key]);
+        }
+      }
+
+      // Append numeric fields safely
+      formDataToSend.set("price", parseFloat(formData.price));
+      formDataToSend.set("offerPrice", parseFloat(formData.offerPrice || 0));
+      formDataToSend.set("discount", parseFloat(discount || 0));
+
+      const res = await fetch(url, { method, body: formDataToSend });
+      const data = await res.json();
+
+      if (res.ok) {
+        setMessage(isEdit ? "Product updated successfully!" : "Product created successfully!");
+
+        if (!isEdit) {
+          setFormData({
+            name: "",
+            desc: "",
+            category: "",
+            subcategory: "",
+            price: "",
+            offerPrice: "",
+            weight: "",
+            images: [""],
+          });
+        }
+
+        setTimeout(() => {
+          setMessage("");
+          if (isEdit) navigate("/manageproduct");
+        }, 2000);
       } else {
-        formDataToSend.append(key, formData[key]);
+        setMessage(`Error: ${data.message || "Failed to save."}`);
       }
+    } catch (err) {
+      console.error("Submit error:", err);
+      setMessage("Server error. Try again.");
     }
-
-    const res = await fetch(url, { method, body: formDataToSend });
-    const data = await res.json();
-
-    if (res.ok) {
-      setMessage(isEdit ? "Product updated successfully!" : "Product created successfully!");
-
-      // If creating a new product, reset the form
-      if (!isEdit) {
-        setFormData({
-          name: "",
-          desc: "",
-          category: "",
-          subcategory:"",
-          price: "",
-          offerPrice: "",
-          weight: "",
-          pieces: "",
-          availability: true,
-          images: [""],
-        });
-      }
-
-      // Delay redirect (for edit) or clear message (for create)
-      setTimeout(() => {
-        setMessage("");
-        if (isEdit) navigate("/manageproduct");
-      }, 2000);
-    } else {
-      setMessage(`Error: ${data.message || "Failed to save."}`);
-    }
-  } catch (err) {
-    console.error(err);
-    setMessage("Server error. Try again.");
-  }
-};
-
+  };
 
   
   return (
@@ -175,6 +244,12 @@ const handleSubmit = async (e) => {
                   </select>
                 </div>
               </div>
+     {/* Auto Display Discount
+      {discount > 0 && (
+        <p style={{ color: "green", fontWeight: "bold" }}>
+          Discount: {discount}%
+        </p>
+      )} */}
 
               {/* Name + Description */}
               <div className="form-row">
@@ -255,3 +330,7 @@ const handleSubmit = async (e) => {
 };
 
 export default NewProduct;
+
+
+
+

@@ -43,6 +43,7 @@ const Bestseller = () => {
     const updatedProduct = {
       id: product.id,
       name: product.name,
+      weight:product.weight,
       price: product.offerPrice,
       offerPrice: product.offerPrice,
       image: product.image?.[0] || "",

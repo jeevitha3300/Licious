@@ -16,68 +16,110 @@ const AddressStep = () => {
   const [orderSuccess, setOrderSuccess] = useState(false);
 
   const { cartItems, calculateSubtotal, removeFromCart, clearCart } = useCart();
-  const deliveryCharge = calculateSubtotal() >= 499 ? 0 : 39;
-  const total = calculateSubtotal() + deliveryCharge;
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
+  // ✅ Load logged-in user
+  const storedUser = localStorage.getItem('user');
+  const user = storedUser ? JSON.parse(storedUser) : null;
+
+  const subtotal = calculateSubtotal();
+  const deliveryCharge = subtotal >= 499 ? 0 : 39;
+  const total = subtotal + deliveryCharge;
+
+  // ✅ Load saved address from localStorage
   useEffect(() => {
-    const storedAddress = localStorage.getItem('savedAddress');
-    if (storedAddress) {
-      setSavedAddress(JSON.parse(storedAddress));
-      setSelected(true);
+    if (user?.email) {
+      const addressKey = `savedAddress_${user.email}`;
+      const storedAddress = localStorage.getItem(addressKey);
+      if (storedAddress) {
+        setSavedAddress(JSON.parse(storedAddress));
+        setSelected(true);
+      }
     }
-  }, []);
+  }, [user?.email]);
 
+  // ✅ Add / Edit address
   const handleAddAddressClick = () => setShowModal(true);
 
   const handleSaveAddress = (addressData) => {
     setSavedAddress(addressData);
     setSelected(true);
     setShowModal(false);
-    localStorage.setItem('savedAddress', JSON.stringify(addressData));
+
+    if (user?.email) {
+      localStorage.setItem(`savedAddress_${user.email}`, JSON.stringify(addressData));
+    }
   };
 
   const handleSelectAddress = () => setSelected(true);
 
   const handleDeleteAddress = () => {
-    setSavedAddress(null);
-    setSelected(false);
-    localStorage.removeItem('savedAddress');
+    if (user?.email) {
+      localStorage.removeItem(`savedAddress_${user.email}`);
+      setSavedAddress(null);
+      setSelected(false);
+    }
   };
 
   const handleEditAddress = () => setShowModal(true);
 
-  const handleClickPlaceOrder = () => {
-    // Prepare new order object
+  // ✅ Place Order
+  const handleClickPlaceOrder = async () => {
+    if (!user || !user.email) {
+      alert('Please log in to place an order.');
+      return;
+    }
+
+    if (!savedAddress) {
+      alert('Please add/select an address before placing the order.');
+      return;
+    }
+
     const newOrder = {
-      id: Date.now(), // unique id based on timestamp
-      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-      items: Object.values(cartItems),
-      address: savedAddress,
-      timeSlot: selectedSlot || 'Not selected',
-      subtotal: calculateSubtotal(),
+      userEmail: user.email,
+      items: Object.values(cartItems).map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        offerPrice: item.offerPrice,
+        quantity: item.quantity,
+        image: item.image,
+        weight: item.weight || 'Not specified', // ✅ ensure weight stored
+      })),
+      subtotal,
       deliveryCharge,
       total,
+      address: savedAddress, // ✅ FIXED: replaced selectedAddress → savedAddress
+      timeSlot: selectedSlot || 'Not selected',
+      createdAt: new Date().toISOString(),
+      status: "Pending", // initial status
     };
 
-    // Get existing orders from localStorage
-    const existingOrders = JSON.parse(localStorage.getItem('orderHistory')) || [];
-
-    // Add new order to the list
+    // ✅ Save locally (for account history)
+    const orderKey = `orderHistory_${user.email}`;
+    const existingOrders = JSON.parse(localStorage.getItem(orderKey)) || [];
     existingOrders.push(newOrder);
+    localStorage.setItem(orderKey, JSON.stringify(existingOrders));
 
-    // Save updated order history back to localStorage
-    localStorage.setItem('orderHistory', JSON.stringify(existingOrders));
+    // ✅ Save to backend (MongoDB)
+    try {
+      const response = await fetch('http://localhost:5000/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder),
+      });
 
+      if (!response.ok) throw new Error('Failed to save order');
+      console.log('✅ Order saved to MongoDB');
+    } catch (err) {
+      console.error('❌ Error saving order:', err);
+    }
+
+    // ✅ Clear cart and show success
     setCurrentStep('payment');
     setOrderSuccess(true);
-
     clearCart();
-
-    // Redirect to homepage after 3 seconds
-    setTimeout(() => {
-      navigate('/');
-    }, 3000);
+    setTimeout(() => navigate('/'), 3000);
   };
 
   return (
@@ -96,17 +138,13 @@ const navigate = useNavigate();
                     <h3 className="saveoption">🏠 {savedAddress.label}</h3>
                     <p>{savedAddress.fullAddress}</p>
                     <p>{savedAddress.city}</p>
-                    <p>Mobile Number : {savedAddress.mobile}</p>
+                    <p>Mobile Number: {savedAddress.mobile}</p>
                   </div>
                 </label>
                 {selected && (
                   <div className="actions">
-                    <button className="delete-btn" onClick={handleDeleteAddress}>
-                      Delete
-                    </button>
-                    <button className="edit-btn" onClick={handleEditAddress}>
-                      Edit
-                    </button>
+                    <button className="delete-btn" onClick={handleDeleteAddress}>Delete</button>
+                    <button className="edit-btn" onClick={handleEditAddress}>Edit</button>
                   </div>
                 )}
               </div>
@@ -136,9 +174,9 @@ const navigate = useNavigate();
         {currentStep === 'summary' && (
           <div className="summary-panel">
             <h3 className="deliverytime mb-3">
-              {Object.keys(cartItems).length} item{Object.keys(cartItems).length > 1 ? 's' : ''} to arrive Today (
-              {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}
-              )
+              {Object.keys(cartItems).length} item
+              {Object.keys(cartItems).length > 1 ? 's' : ''} to arrive Today (
+              {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })})
             </h3>
 
             <div className="summarydrop">
@@ -156,9 +194,7 @@ const navigate = useNavigate();
                   className="product-image"
                 />
                 <div className="product-details">
-                  <p className="productsummary1 mt-3">
-                    <strong>{item.name}</strong>
-                  </p>
+                  <p className="productsummary1 mt-3"><strong>{item.name}</strong></p>
                   <p className="productsummary">
                     {item.weight}
                     <span className="price"> ₹{item.offerPrice}</span>
@@ -178,14 +214,12 @@ const navigate = useNavigate();
             ))}
 
             <div className="billing-summary">
-              <p>Subtotal: ₹{calculateSubtotal()}</p>
+              <p>Subtotal: ₹{subtotal}</p>
               <p>
                 Delivery Charge:{' '}
                 {deliveryCharge === 0 ? <span className="text-success">Free</span> : `₹${deliveryCharge}`}
               </p>
-              <p>
-                <strong>Total: ₹{total}</strong>
-              </p>
+              <p><strong>Total: ₹{total}</strong></p>
             </div>
 
             <button className="proceed-btn-summary active" onClick={handleClickPlaceOrder}>
@@ -195,20 +229,19 @@ const navigate = useNavigate();
         )}
 
         {/* PAYMENT STEP */}
-    {currentStep === 'payment' && (
-  <div className="payment-step">
-    {orderSuccess && (
-      <div className="success-message mt-3">
-        ✅ Your order has been placed successfully!
-        <br />
+        {currentStep === 'payment' && (
+          <div className="payment-step">
+            {orderSuccess && (
+              <div className="success-message mt-3">
+                ✅ Your order has been placed successfully!
+                <br />
+              </div>
+            )}
+          </div>
+        )}
       </div>
-    )}
-  </div>
-)}
 
-      </div>
-
-      {/* CHECKOUT STEPS TRACKER */}
+      {/* CHECKOUT STEPS */}
       <div className="checkout-steps">
         <div className={`step ${currentStep === 'address' ? 'active' : 'done'}`}>
           <div className="step-icon">{currentStep === 'address' ? '●' : '✓'}</div>
@@ -225,11 +258,7 @@ const navigate = useNavigate();
           )}
         </div>
 
-        <div
-          className={`step ${
-            currentStep === 'summary' ? 'active' : currentStep === 'payment' ? 'done' : ''
-          }`}
-        >
+        <div className={`step ${currentStep === 'summary' ? 'active' : currentStep === 'payment' ? 'done' : ''}`}>
           <div className="step-icon">●</div>
           <span>Delivery Summary</span>
           <p className="step-description">
@@ -237,7 +266,7 @@ const navigate = useNavigate();
           </p>
         </div>
 
-        <div className={`step ${currentStep === 'payment' ? 'active' : ''}`} onClick={handleClickPlaceOrder}>
+        <div className={`step ${currentStep === 'payment' ? 'active' : ''}`}>
           <div className="step-icon">○</div>
           <span>Place Order</span>
         </div>
@@ -262,4 +291,3 @@ const navigate = useNavigate();
 };
 
 export default AddressStep;
-

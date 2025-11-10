@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './login.css';
@@ -7,7 +5,6 @@ import * as bootstrap from 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import login from '../assets/images/login.svg';
-
 const Login = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -18,19 +15,16 @@ const Login = () => {
     confirmPassword: "",
     city: ""
   });
-
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-
   const navigate = useNavigate();
-
   const handleAccountClick = () => {
     navigate('/Account');
   };
 
-  const handleLogout = () => {
+ const handleLogout = () => {
     setLoggedIn(false);
     setShowDropdown(false);
     localStorage.removeItem("isLoggedIn");
@@ -58,60 +52,143 @@ const Login = () => {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
 
-    if (validateForm()) {
-      try {
-        const { confirmPassword, ...userData } = formData;
+//     if (validateForm()) {
+//       try {
+//         const { confirmPassword, ...userData } = formData;
 
-        const response = await fetch('http://localhost:5000/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData)
+//         const response = await fetch('http://localhost:5000/api/register', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify(userData)
+//         });
+
+//         const result = await response.json();
+
+//         if (!response.ok) {
+//           setErrors({ email: result.message || "Registration failed" });
+//           return;
+//         }
+
+//         setSuccessMessage("Registration successful!");
+//         setLoggedIn(true);
+//         localStorage.setItem("isLoggedIn", "true");
+//         localStorage.setItem("user", JSON.stringify(formData));
+
+//         setTimeout(() => {
+//           setFormData({
+//             firstName: "",
+//             lastName: "",
+//             mobile: "",
+//             email: "",
+//             password: "",
+//             confirmPassword: "",
+//             city: ""
+//           });
+//           setSuccessMessage("");
+
+//           const loginCanvas = document.getElementById('offcanvasLogin');
+//           if (loginCanvas) {
+//             const offcanvasInstance = bootstrap.Offcanvas.getInstance(loginCanvas);
+//             if (offcanvasInstance) {
+//               offcanvasInstance.hide();
+//             }
+//           }
+
+//           //  NEW LOGIC: Redirect to checkout if user came from there
+//   const redirectToCheckout = localStorage.getItem("redirectToCheckout");
+//   if (redirectToCheckout === "true") {
+//     localStorage.removeItem("redirectToCheckout");
+//     navigate('/checkout');
+//   } else {
+//     navigate('/');
+//   }
+// }, 2000);
+//       } catch (err) {
+//         console.error("Registration error:", err);
+//         setErrors({ general: "Something went wrong. Please try again later." });
+//       }
+//     }
+//   };
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (validateForm()) {
+    try {
+      const { confirmPassword, ...userData } = formData;
+
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      const result = await response.json();
+
+      // ❌ Handle backend errors
+      if (!response.ok) {
+        setErrors({ email: result.message || "Registration failed" });
+        return;
+      }
+
+      // ⚠️ Handle existing user but password mismatch
+      if (result.passwordMismatch) {
+        setErrors({ email: "Email already exists. Please log in with correct password." });
+        return;
+      }
+
+      // ✅ Existing user (login success)
+      if (result.existing) {
+        setSuccessMessage("Welcome back! You are already registered.");
+      } else {
+        // ✅ New registration
+        setSuccessMessage("Registration successful!");
+      }
+
+      // ✅ Set login state
+      setLoggedIn(true);
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("user", JSON.stringify(result.customer));
+
+      // ✅ Redirect logic
+      setTimeout(() => {
+        setFormData({
+          firstName: "",
+          lastName: "",
+          mobile: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          city: "",
         });
+        setSuccessMessage("");
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          setErrors({ email: result.message || "Registration failed" });
-          return;
+        const loginCanvas = document.getElementById("offcanvasLogin");
+        if (loginCanvas) {
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(loginCanvas);
+          if (offcanvasInstance) offcanvasInstance.hide();
         }
 
-        setSuccessMessage("Registration successful!");
-        setLoggedIn(true);
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(formData));
+        const redirectToCheckout = localStorage.getItem("redirectToCheckout");
+        if (redirectToCheckout === "true") {
+          localStorage.removeItem("redirectToCheckout");
+          navigate("/checkout");
+        } else {
+          navigate("/");
+        }
+      }, 2000);
 
-        setTimeout(() => {
-          setFormData({
-            firstName: "",
-            lastName: "",
-            mobile: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            city: ""
-          });
-          setSuccessMessage("");
-
-          const loginCanvas = document.getElementById('offcanvasLogin');
-          if (loginCanvas) {
-            const offcanvasInstance = bootstrap.Offcanvas.getInstance(loginCanvas);
-            if (offcanvasInstance) {
-              offcanvasInstance.hide();
-            }
-          }
-
-          navigate('/');
-        }, 2000);
-
-      } catch (err) {
-        console.error("Registration error:", err);
-        setErrors({ general: "Something went wrong. Please try again later." });
-      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      setErrors({ general: "Something went wrong. Please try again later." });
     }
-  };
+  }
+};
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";

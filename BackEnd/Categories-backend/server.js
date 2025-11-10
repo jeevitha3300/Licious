@@ -63,23 +63,53 @@ app.get('/api/customers', async (req, res) => {
   }
 });
 // ---------------------Customer--------------------------------
-// Register new customer
+// // Register new customer
 app.post('/api/register', async (req, res) => {
   try {
     const { firstName, lastName, mobile, email, password, city } = req.body;
 
+    // ✅ Check if customer already exists
     const existingCustomer = await Customer.findOne({ email });
+
     if (existingCustomer) {
-      return res.status(400).json({ message: 'Customer already registered.' });
+      // ⚠️ Case 3: If password does not match
+      if (existingCustomer.password !== password) {
+        return res.status(400).json({
+          message: "Email already registered with a different password. Please log in with the correct password.",
+          existing: true,
+          passwordMismatch: true
+        });
+      }
+
+      // ✅ Case 2: Email + password match → treat as login
+      return res.status(200).json({
+        message: "Welcome back! Logged in successfully.",
+        existing: true,
+        customer: existingCustomer
+      });
     }
 
-    const newCustomer = new Customer({ firstName, lastName, mobile, email, password, city });
+    // ✅ Case 1: New user → create record
+    const newCustomer = new Customer({
+      firstName,
+      lastName,
+      mobile,
+      email,
+      password,
+      city
+    });
+
     await newCustomer.save();
 
-    res.status(201).json({ message: 'Customer registered successfully.' });
+    res.status(201).json({
+      message: "Customer registered successfully.",
+      existing: false,
+      customer: newCustomer
+    });
+
   } catch (err) {
-    console.error('Register error:', err);
-    res.status(500).json({ message: 'Server error during registration.' });
+    console.error("Register error:", err);
+    res.status(500).json({ message: "Server error during registration." });
   }
 });
 
@@ -389,7 +419,7 @@ app.delete('/api/categories/:id', async (req, res) => {
 // ---------------------Products----------------------
 app.post('/api/products', upload.array('images', 10), async (req, res) => {
   try {
-    const { name, category, subcategory, desc, weight, price, offerPrice, enabled } = req.body;
+    const { name, category, subcategory, desc, weight, price, offerPrice,discount, enabled } = req.body;
     const images = req.files.map(file => `/uploads/${file.filename}`);
 
     const newProduct = new Product({
@@ -400,6 +430,7 @@ app.post('/api/products', upload.array('images', 10), async (req, res) => {
       weight,
       price,
       offerPrice,
+      discount,
       images,
       enabled: enabled !== undefined ? enabled : true,
     });
@@ -415,7 +446,7 @@ app.post('/api/products', upload.array('images', 10), async (req, res) => {
 // UPDATE PRODUCT
 app.put('/api/products/:id', upload.array('images', 10), async (req, res) => {
   try {
-    const { name, category, subcategory, desc, weight, price, offerPrice, enabled } = req.body;
+    const { name, category, subcategory, desc, weight, price, offerPrice,discount, enabled } = req.body;
 
     let updatedData = {
       name,
@@ -425,6 +456,7 @@ app.put('/api/products/:id', upload.array('images', 10), async (req, res) => {
       weight,
       price,
       offerPrice,
+      discount,
       enabled: enabled !== undefined ? enabled : true,
     };
 
@@ -568,28 +600,104 @@ if (!user) {
 });
 
 // =================================
-// ✅ Create new order
-app.post("/api/order", async (req, res) => {
+//  Create new order
+app.post("/api/orders", async (req, res) => {
   try {
-    const newOrder = new Order(req.body);
+    const { userEmail, items, total, subtotal, deliveryCharge, address, timeSlot } = req.body;
+
+    if (!userEmail || !items || items.length === 0) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    const newOrder = new Order({
+      userEmail,
+      items: items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        offerPrice: item.offerPrice,
+        quantity: item.quantity,
+        image: item.image,
+        weight: item.weight || "Not specified", // ✅ ensures value saved
+      })),
+      subtotal,
+      deliveryCharge,
+      totalAmount: total,
+      address,
+      timeSlot,
+        status: "Pending",
+    });
+
     await newOrder.save();
-    res.status(201).json({ message: "Order placed successfully", order: newOrder });
+    res.status(201).json({ success: true, order: newOrder });
   } catch (err) {
-    console.error("Order Save Error:", err);
-    res.status(500).json({ message: "Failed to save order" });
+    console.error("Error saving order:", err);
+    res.status(500).json({ success: false, error: "Failed to save order" });
+  }
+});
+//  Update order status
+app.put("/api/orders/:id/status", async (req, res) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true } // ✅ return updated document
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated",
+      order: updatedOrder, // ✅ send updated order back
+    });
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+//  Get all orders (for admin)
+app.get("/api/orders", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+});
+//  Get orders by user email
+app.get("/api/orders/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const orders = await Order.find({ userEmail: email }).sort({ createdAt: -1 });
+    res.json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 });
 
-// ✅ Fetch orders by userId
-app.get("/api/order/user/:userId", async (req, res) => {
+// Delete a single order by ID
+app.delete("/api/orders/:id", async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.params.userId }).sort({ createdAt: -1 });
-    res.json(orders);
+    const order = await Order.findByIdAndDelete(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.json({ message: "Order deleted successfully", order });
   } catch (err) {
-    console.error("Fetch Orders Error:", err);
-    res.status(500).json({ message: "Error fetching orders" });
+    console.error("Error deleting order:", err);
+    res.status(500).json({ message: "Failed to delete order", error: err.message });
   }
 });
+
+
 
 // Start server
 app.listen(PORT, () => {

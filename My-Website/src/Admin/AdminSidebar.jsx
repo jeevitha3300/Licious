@@ -373,7 +373,7 @@ const AdminSidebar = () => {
         )}
 
         {/* TESTIMONIAL */}
-        {permissions.Testimonial && (
+        {/* {permissions.Testimonial && (
           <>
             <li style={menuItemStyle} onClick={() => handleMenuToggle("testimonial")}>
               <FaComment style={iconStyle} />
@@ -397,10 +397,10 @@ const AdminSidebar = () => {
               </>
             )}
           </>
-        )}
+        )} */}
 
         {/* SETTING */}
-        {permissions.Setting && (
+        {/* {permissions.Setting && (
           <>
             <li style={menuItemStyle} onClick={() => handleMenuToggle("setting")}>
               <FaCog style={iconStyle} />
@@ -419,7 +419,7 @@ const AdminSidebar = () => {
               </li>
             )}
           </>
-        )}
+        )} */}
       </ul>
     </div>
   );
