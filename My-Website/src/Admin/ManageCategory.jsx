@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import AdminHeader from './AdminHeader';
 import AdminSidebar from './AdminSidebar';
 import './customertable.css';
-
 const ManageCategory = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -17,7 +16,6 @@ const ManageCategory = () => {
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const navigate = useNavigate();
-
   const fetchCategories = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/categories');
@@ -30,11 +28,9 @@ const ManageCategory = () => {
       setFetchError(err.message);
     }
   };
-
   useEffect(() => {
     fetchCategories();
   }, []);
-
   const safeCategoryData = Array.isArray(categoryData) ? categoryData : [];
   const filteredData = safeCategoryData
     .slice()
@@ -46,19 +42,16 @@ const ManageCategory = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-
   const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-
   const toggleCheckbox = (categoryId) =>
     setSelectedCategoryIds(prev =>
       prev.includes(categoryId)
         ? prev.filter(id => id !== categoryId)
         : [...prev, categoryId]
     );
-
   const toggleAllCheckboxes = () => {
     const currentIds = currentItems.map(c => c._id);
     const allSelected = currentIds.every(id => selectedCategoryIds.includes(id));
@@ -68,7 +61,6 @@ const ManageCategory = () => {
         : [...new Set([...prev, ...currentIds])]
     );
   };
-
   const handleDelete = async (categoryId) => {
     if (!window.confirm('Are you sure you want to delete this category?')) return;
     try {
@@ -86,9 +78,7 @@ const ManageCategory = () => {
       alert('Delete failed: ' + err.message);
     }
   };
-
   const handleEdit = (category) => navigate('/newcategory', { state: { category } });
-
   const handleToggleEnable = async (categoryId) => {
     try {
       const res = await fetch(`http://localhost:5000/api/categories/${categoryId}/toggle`, { method: 'PUT' });
@@ -103,7 +93,6 @@ const ManageCategory = () => {
       alert('Toggle failed: ' + err.message);
     }
   };
-
   const handleDeleteSelected = async () => {
     if (!selectedCategoryIds.length) return alert('No category selected.');
     if (!window.confirm('Are you sure you want to delete all selected categories?')) return;
@@ -125,9 +114,7 @@ const ManageCategory = () => {
       alert('Bulk delete failed: ' + err.message);
     }
   };
-
   const selectedCategories = categoryData.filter(c => selectedCategoryIds.includes(c._id));
-
   const exportToCSV = () => {
     if (!selectedCategories.length) return alert('Select at least one category to export.');
     const headers = ['Category Name', 'Subcategory Name', 'Status'];
@@ -141,7 +128,6 @@ const ManageCategory = () => {
     const csvContent = [headers, ...rows].map(e => e.join(',')).join('\n');
     saveAs(new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }), 'categories.csv');
   };
-
   const exportToExcel = () => {
     if (!selectedCategories.length) return alert('Select at least one category to export.');
     const ws = XLSXUtils.json_to_sheet(
@@ -157,7 +143,6 @@ const ManageCategory = () => {
     XLSXUtils.book_append_sheet(wb, ws, 'Categories');
     writeFile(wb, 'categories.xlsx');
   };
-
   const exportToPDF = () => {
     if (!selectedCategories.length) return alert('Select at least one category to export.');
     const doc = new jsPDF();
@@ -173,7 +158,6 @@ const ManageCategory = () => {
     });
     doc.save('categories.pdf');
   };
-
   return (
     <>
       <AdminHeader />
@@ -182,7 +166,6 @@ const ManageCategory = () => {
         <div className="customerheader">
           <h3 className="cush3">Category</h3>
         </div>
-
         <div className="d-flex customer-table1 justify-content-between mt-4 align-items-center">
           <div>
             Show
@@ -199,7 +182,6 @@ const ManageCategory = () => {
               ))}
             </select>
           </div>
-
           <div>
             Search:
             <input
@@ -213,7 +195,6 @@ const ManageCategory = () => {
               placeholder="Search categories..."
             />
           </div>
-
           <div>
             <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}><FaFileCsv /></button>
             <button className="btn btn-outline-success me-2" onClick={exportToExcel}><FaFileExcel /></button>
@@ -221,13 +202,11 @@ const ManageCategory = () => {
             <button className="btn btn-outline-danger" onClick={handleDeleteSelected}><FaTrash className="me-1" /></button>
           </div>
         </div>
-
         {fetchError && <div className="alert alert-danger mt-3">Error fetching categories: {fetchError}</div>}
-
         <div className="customer-table2 mb-3">
           <table className="table table-bordered table-hover">
             <thead className="thead-light">
-              <tr style={{textAlign:"center"}}>
+              <tr style={{ textAlign: "center" }}>
                 <th>
                   <input
                     type="checkbox"
@@ -245,52 +224,50 @@ const ManageCategory = () => {
             </thead>
             <tbody>
               {!currentItems.length ? (
-                <tr > 
+                <tr >
                   <td colSpan="2" className="text-center">No categories found</td>
-                  </tr>
+                </tr>
               ) : (
                 currentItems.map(c => (
-                  <tr className='p-0'  key={c._id} style={{textAlign:"center",verticalAlign:"middle"}} >
+                  <tr className='p-0' key={c._id} style={{ textAlign: "center", verticalAlign: "middle" }} >
                     <td><input type="checkbox" checked={selectedCategoryIds.includes(c._id)} onChange={() => toggleCheckbox(c._id)} /></td>
                     <td>{c.category}</td>
-                  
-
-                <td className="py-0">
-             <img
-  src={c.image}
-  alt={c.category}
-  style={{
-    width: '50px',
-    height: 'auto',
-    objectFit: 'cover',
-    borderRadius: '5px',
-    display: 'block',
-    margin: 'auto'
-  }}
-/>
-    </td>
-                 <td style={{ padding: "0px 0px",}}>
-  {c.subcategories.map((sub, idx) => (
-    <span key={idx}>
-      {sub.name}{idx < c.subcategories.length - 1 ? ', ' : ''}
-    </span>
-  ))}
-</td>
-<td className="py-0">
-<img
-  src={c.subcategories[0].image}
-  alt={c.subcategories[0].name}
-  style={{
-    width: '50px',
-    height: 'auto',
-    objectFit: 'cover',
-    borderRadius: '5px',
-    display: 'block',
-    margin: 'auto'
-  }}
-/>
-</td>
- <td>
+                    <td className="py-0">
+                      <img
+                        src={c.image}
+                        alt={c.category}
+                        style={{
+                          width: '50px',
+                          height: 'auto',
+                          objectFit: 'cover',
+                          borderRadius: '5px',
+                          display: 'block',
+                          margin: 'auto'
+                        }}
+                      />
+                    </td>
+                    <td style={{ padding: "0px 0px", }}>
+                      {c.subcategories.map((sub, idx) => (
+                        <span key={idx}>
+                          {sub.name}{idx < c.subcategories.length - 1 ? ', ' : ''}
+                        </span>
+                      ))}
+                    </td>
+                    <td className="py-0">
+                      <img
+                        src={c.subcategories[0].image}
+                        alt={c.subcategories[0].name}
+                        style={{
+                          width: '50px',
+                          height: 'auto',
+                          objectFit: 'cover',
+                          borderRadius: '5px',
+                          display: 'block',
+                          margin: 'auto'
+                        }}
+                      />
+                    </td>
+                    <td>
                       <div
                         className={`toggle-switch ${c.enabled ? "enabled" : "disabled"}`}
                         onClick={() => handleToggleEnable(c._id)}
@@ -299,9 +276,9 @@ const ManageCategory = () => {
                       </div>
                     </td>
                     <td>
-                        <div style={{ display: 'flex', gap: '5px' }}>
-                      <button className="btn btn-sm btn-success" onClick={() => handleEdit(c)}><FaEdit /></button>
-                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(c._id)}><FaTrash /></button>
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button className="btn btn-sm btn-success" onClick={() => handleEdit(c)}><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => handleDelete(c._id)}><FaTrash /></button>
                       </div>
                     </td>
                   </tr>
@@ -310,7 +287,6 @@ const ManageCategory = () => {
             </tbody>
           </table>
         </div>
-
         {/* Pagination */}
         <ul className="pagination justify-content-end" style={{ cursor: 'pointer' }}>
           <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>

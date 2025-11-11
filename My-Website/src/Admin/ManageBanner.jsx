@@ -12,10 +12,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useNavigate } from "react-router-dom";
 import "./customertable.css"; // your table styles
-// import "./toggleswitch.css"; // optional toggle switch styles
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
-
 const ManageBanner = () => {
   const [bannerData, setBannerData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -24,8 +22,7 @@ const ManageBanner = () => {
   const [selectedBannerIds, setSelectedBannerIds] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const navigate = useNavigate();
-
-  // ✅ Fetch banners from API
+  //  Fetch banners from API
   const fetchBanners = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/banner");
@@ -38,12 +35,10 @@ const ManageBanner = () => {
       setFetchError(err.message);
     }
   };
-
   useEffect(() => {
     fetchBanners();
   }, []);
-
-  // ✅ Filter, sort, search
+  //  Filter, sort, search
   const safeBannerData = Array.isArray(bannerData) ? bannerData : [];
   const filteredData = safeBannerData
     .slice()
@@ -51,13 +46,11 @@ const ManageBanner = () => {
     .filter((banner) =>
       Object.values(banner).join(" ").toLowerCase().includes(searchTerm.toLowerCase())
     );
-
   const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-
-  // ✅ Delete banner
+  //  Delete banner
   const handleDelete = async (bannerId) => {
     if (window.confirm("Are you sure you want to delete this banner?")) {
       try {
@@ -74,49 +67,28 @@ const ManageBanner = () => {
       }
     }
   };
-
   //  Edit banner (navigate to NewBanner with state)
   const handleEdit = (banner) => {
     navigate("/newbanner", { state: { banner } });
   };
-//  const handleToggleEnable = async (bannerId) => {
-//     try {
-//       const res = await fetch(`http://localhost:5000/api/banner/${bannerId}/toggle`, {
-//         method: "PUT",
-//         headers: { "Content-Type": "application/json" },
-//       });
+  const handleToggleEnable = async (bannerId) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/banner/${bannerId}/toggle`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
 
-//       if (res.ok) {
-//         fetchBanners(); // refresh data
-//       } else {
-//         const error = await res.json();
-//         alert("Toggle failed: " + error.message);
-//       }
-//     } catch (err) {
-//       console.error("Toggle failed:", err);
-//       alert("Toggle failed: " + err.message);
-//     }
-//   };
-
-const handleToggleEnable = async (bannerId) => {
-  try {
-    const res = await fetch(`http://localhost:5000/api/banner/${bannerId}/toggle`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (res.ok) {
-      fetchBanners(); // refresh data
-    } else {
-      const error = await res.json();
-      alert("Toggle failed: " + error.message);
+      if (res.ok) {
+        fetchBanners(); // refresh data
+      } else {
+        const error = await res.json();
+        alert("Toggle failed: " + error.message);
+      }
+    } catch (err) {
+      console.error("Toggle failed:", err);
+      alert("Toggle failed: " + err.message);
     }
-  } catch (err) {
-    console.error("Toggle failed:", err);
-    alert("Toggle failed: " + err.message);
-  }
-};
-
+  };
   //  Selection helpers
   const toggleCheckbox = (bannerId) =>
     setSelectedBannerIds((prev) =>
@@ -124,7 +96,6 @@ const handleToggleEnable = async (bannerId) => {
         ? prev.filter((id) => id !== bannerId)
         : [...prev, bannerId]
     );
-
   const toggleAllCheckboxes = () => {
     const currentIds = currentItems.map((b) => b._id);
     const allSelected = currentIds.every((id) => selectedBannerIds.includes(id));
@@ -134,12 +105,10 @@ const handleToggleEnable = async (bannerId) => {
         : [...new Set([...prev, ...currentIds])]
     );
   };
-
-  // ✅ Export helpers
+  //  Export helpers
   const selectedBanners = bannerData.filter((b) =>
     selectedBannerIds.includes(b._id)
   );
-
   const exportToCSV = () => {
     if (selectedBanners.length === 0) return alert("Select at least one banner.");
     const headers = ["Name", "Type", "Status"];
@@ -152,7 +121,6 @@ const handleToggleEnable = async (bannerId) => {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "banners.csv");
   };
-
   const exportToExcel = () => {
     if (selectedBanners.length === 0) return alert("Select at least one banner.");
     const ws = XLSXUtils.json_to_sheet(
@@ -180,30 +148,24 @@ const handleToggleEnable = async (bannerId) => {
     });
     doc.save("banners.pdf");
   };
-
-
-const handleDeleteSelected = async () => {
-  if (selectedBannerIds.length === 0) return alert("No banners selected.");
-  if (!window.confirm("Delete all selected banners?")) return;
-
-  try {
-    const deletePromises = selectedBannerIds.map((id) =>
-      fetch(`http://localhost:5000/api/banner/${id}`, { method: "DELETE" })
-    );
-    const responses = await Promise.all(deletePromises);
-    const hasError = responses.some((res) => !res.ok);
-
-    if (hasError) alert("Some deletions failed.");
-    else alert("Selected banners deleted successfully.");
-
-    setSelectedBannerIds([]);
-    fetchBanners();
-  } catch (err) {
-    console.error("Bulk delete failed:", err);
-    alert("Bulk delete failed: " + err.message);
-  }
-};
-
+  const handleDeleteSelected = async () => {
+    if (selectedBannerIds.length === 0) return alert("No banners selected.");
+    if (!window.confirm("Delete all selected banners?")) return;
+    try {
+      const deletePromises = selectedBannerIds.map((id) =>
+        fetch(`http://localhost:5000/api/banner/${id}`, { method: "DELETE" })
+      );
+      const responses = await Promise.all(deletePromises);
+      const hasError = responses.some((res) => !res.ok);
+      if (hasError) alert("Some deletions failed.");
+      else alert("Selected banners deleted successfully.");
+      setSelectedBannerIds([]);
+      fetchBanners();
+    } catch (err) {
+      console.error("Bulk delete failed:", err);
+      alert("Bulk delete failed: " + err.message);
+    }
+  };
   return (
     <>
       <AdminHeader />
@@ -212,7 +174,6 @@ const handleDeleteSelected = async () => {
         <div className="customerheader">
           <h3 className="cush3">Manage Banners</h3>
         </div>
-
         {/* Controls */}
         <div className="d-flex customer-table1 justify-content-between mt-4 align-items-center">
           <div>
@@ -232,7 +193,6 @@ const handleDeleteSelected = async () => {
               ))}
             </select>
           </div>
-
           <div>
             Search:
             <input
@@ -246,7 +206,6 @@ const handleDeleteSelected = async () => {
               placeholder="Search banners..."
             />
           </div>
-
           <div>
             <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}>
               <FaFileCsv />
@@ -262,14 +221,12 @@ const handleDeleteSelected = async () => {
             </button>
           </div>
         </div>
-
         {/* Error */}
         {fetchError && (
           <div className="alert alert-danger mt-3">
             Error fetching banners: {fetchError}
           </div>
         )}
-
         {/* Table */}
         <div className="customer-table2 mb-3">
           <table className="table table-bordered table-hover">
@@ -325,9 +282,6 @@ const handleDeleteSelected = async () => {
                       >
                         <div className="toggle-circle"></div>
                       </div>
-                      {/* <div className="toggle-label">
-                        {b.enabled ? "ENABLE" : "DISABLE"}
-                      </div> */}
                     </td>
                     <td>
                       <button
@@ -349,7 +303,6 @@ const handleDeleteSelected = async () => {
             </tbody>
           </table>
         </div>
-
         {/* Pagination */}
         <ul className="pagination justify-content-end" style={{ cursor: "pointer" }}>
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>

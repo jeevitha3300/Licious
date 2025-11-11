@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrash, FaFileCsv, FaFileExcel, FaFilePdf } from 'react-icons/fa';
 import { utils as XLSXUtils, writeFile } from 'xlsx';
@@ -9,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import './customertable.css';
 import AdminHeader from '../Admin/AdminHeader';
 import AdminSidebar from '../Admin/AdminSidebar';
-
 const ManageUser = () => {
   const [userData, setUserData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -19,7 +17,6 @@ const ManageUser = () => {
   const [fetchError, setFetchError] = useState(null);
   const navigate = useNavigate();
   const [passwordVisibility, setPasswordVisibility] = useState({});
-
   const fetchUsers = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/manageuser');
@@ -32,11 +29,9 @@ const ManageUser = () => {
       setFetchError(err.message);
     }
   };
-
   useEffect(() => {
     fetchUsers();
   }, []);
-
   const safeUserData = Array.isArray(userData) ? userData : [];
   const filteredData = safeUserData
     .slice()
@@ -47,14 +42,11 @@ const ManageUser = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-
   const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-
   const selectedUsers = safeUserData.filter(user => selectedUserIds.includes(user._id));
-
   const handleDelete = async (userid) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
@@ -74,19 +66,16 @@ const ManageUser = () => {
       alert("Delete failed: " + err.message);
     }
   };
-
   const handleEdit = (user) => {
     // Navigate to Newuser with user data to edit
     navigate('/newuser', { state: { user } });
   };
-
   const togglePasswordVisibility = (userId) => {
-  setPasswordVisibility(prev => ({
-    ...prev,
-    [userId]: !prev[userId],
-  }));
-};
-
+    setPasswordVisibility(prev => ({
+      ...prev,
+      [userId]: !prev[userId],
+    }));
+  };
   const toggleCheckbox = (userId) => {
     setSelectedUserIds(prev => {
       if (prev.includes(userId)) {
@@ -96,7 +85,6 @@ const ManageUser = () => {
       }
     });
   };
-
   const toggleAllCheckboxes = () => {
     const currentPageUserIds = currentItems.map(user => user._id);
     const allSelected = currentPageUserIds.every(id => selectedUserIds.includes(id));
@@ -106,9 +94,7 @@ const ManageUser = () => {
       setSelectedUserIds(prev => [...new Set([...prev, ...currentPageUserIds])]);
     }
   };
-
   // Export functions ...
-
   const exportToCSV = () => {
     if (selectedUserIds.length === 0) {
       alert("Please select at least one user to export.");
@@ -130,7 +116,6 @@ const ManageUser = () => {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "users.csv");
   };
-
   const exportToExcel = () => {
     if (selectedUserIds.length === 0) {
       alert("Please select at least one user to export.");
@@ -153,7 +138,6 @@ const ManageUser = () => {
     XLSXUtils.book_append_sheet(wb, ws, "Users");
     writeFile(wb, "users.xlsx");
   };
-
   const exportToPDF = () => {
     if (selectedUserIds.length === 0) {
       alert("Please select at least one user to export.");
@@ -176,7 +160,6 @@ const ManageUser = () => {
     });
     doc.save("users.pdf");
   };
-
   const handleDeleteSelected = async () => {
     if (selectedUserIds.length === 0) {
       alert("Please select at least one user to delete.");
@@ -201,7 +184,6 @@ const ManageUser = () => {
       alert("Bulk delete failed: " + err.message);
     }
   };
-
   return (
     <>
       <AdminHeader />
@@ -251,7 +233,6 @@ const ManageUser = () => {
             Error fetching users: {fetchError}
           </div>
         )}
-
         <div className="customer-table2 mb-3">
           <table className="table table-bordered table-hover">
             <thead className="thead-light">
@@ -263,7 +244,6 @@ const ManageUser = () => {
                     checked={currentItems.every(u => selectedUserIds.includes(u._id))}
                   />
                 </th>
-                {/* <th>Sr No.</th> */}
                 <th>Name</th>
                 <th>Contact</th>
                 <th>Email</th>
@@ -279,7 +259,6 @@ const ManageUser = () => {
               ) : currentItems.map((user, idx) => (
                 <tr key={user._id}>
                   <td><input type="checkbox" checked={selectedUserIds.includes(user._id)} onChange={() => toggleCheckbox(user._id)} /></td>
-                  {/* <td>{filteredData.length - (indexOfFirstItem + idx)}</td> */}
                   <td>{user.name}</td>
                   <td>{user.contact}</td>
                   <td>{user.email}</td>
@@ -288,25 +267,23 @@ const ManageUser = () => {
                     {Object.entries(user.permissions || {}).filter(([_, v]) => v).map(([k], index) => (
                       <React.Fragment key={k}>
                         <span className="bg-danger rounded me-1 mb-2 d-inline-block" style={{ padding: '2px' }}>{k} </span>
-                        {/* {(index + 1) % 4 === 0 && <br />} */}
                       </React.Fragment>
                     ))}
                   </td>
-                  {/* <td>{user.password}</td> */}
                   <td>
-                          <input
-                            type={passwordVisibility[user._id] ? "text" : "password"}
-                            value={user.password}
-                            readOnly
-                            style={{ border: "none", background: "transparent", width: "100px" }}/>
-                            <button
-                             onClick={() => togglePasswordVisibility(user._id)}
-                             className="btn btn-sm btn-link"
-                             type="button">
-                             {passwordVisibility[user._id] ? "🙈" : "👁️"}
-                            </button>
-                            </td>
-                             <td>
+                    <input
+                      type={passwordVisibility[user._id] ? "text" : "password"}
+                      value={user.password}
+                      readOnly
+                      style={{ border: "none", background: "transparent", width: "100px" }} />
+                    <button
+                      onClick={() => togglePasswordVisibility(user._id)}
+                      className="btn btn-sm btn-link"
+                      type="button">
+                      {passwordVisibility[user._id] ? "🙈" : "👁️"}
+                    </button>
+                  </td>
+                  <td>
                     <button className="btn btn-sm btn-success mx-2" onClick={() => handleEdit(user)}><FaEdit /></button>
                     <button className="btn btn-sm btn-danger" onClick={() => handleDelete(user._id)}><FaTrash /></button>
                   </td>
@@ -315,14 +292,13 @@ const ManageUser = () => {
             </tbody>
           </table>
         </div>
-
         {/* Pagination */}
-        <ul className="pagination justify-content-end" style={{cursor:'pointer'}}>
+        <ul className="pagination justify-content-end" style={{ cursor: 'pointer' }}>
           <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
             <button
               className="page-link"
               onClick={() => setCurrentPage(p => p - 1)}
-              style={{ backgroundColor: "#ff2e56", border: "1px solid #fff", color: "#fff", borderRadius: "10px", border: "none",cursor:"pointer" }}
+              style={{ backgroundColor: "#ff2e56", border: "1px solid #fff", color: "#fff", borderRadius: "10px", border: "none", cursor: "pointer" }}
             >Previous</button>
           </li>
           {Array.from({ length: totalPages }, (_, i) => (
@@ -348,5 +324,4 @@ const ManageUser = () => {
     </>
   );
 };
-
 export default ManageUser;

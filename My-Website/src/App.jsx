@@ -89,7 +89,7 @@ function App() {
         <Route path="/location" element={<Location />} />
         {/* <Route path="/categories" element={<ShopCategory />} /> */}
           <Route path="/search" element={<Search />} />
-        <Route path="/FlavourAll" element={<FlavourAll/>}/>
+        <Route path="/flavourall" element={<FlavourAll/>}/>
          <Route path="/BestsellerAll" element={<BestsellerAll/>}/>
          <Route path="/FishSeafoodAll" element={<FishSeafoodAll/>}/>
         {/* login */}

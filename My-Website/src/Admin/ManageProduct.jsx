@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import AdminHeader from './AdminHeader';
 import AdminSidebar from './AdminSidebar';
 import './customertable.css';
-
 const ManageProduct = () => {
   const [productData, setProductData] = useState([]);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -16,28 +15,23 @@ const ManageProduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [fetchError, setFetchError] = useState(null);
-
   const navigate = useNavigate();
-
-
-  // ✅ Fetch products (GET request)
+  //  Fetch products (GET request)
   const fetchProducts = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/products');
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       setProductData(data);
-      
+
       setFetchError(null);
     } catch (err) {
       setFetchError(err.message);
     }
   };
-
   useEffect(() => {
     fetchProducts();
   }, []);
-
   // Filter + search + sort
   const filteredData = productData
     .slice()
@@ -48,19 +42,16 @@ const ManageProduct = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-
   // Pagination
   const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-
   // Checkbox helpers
   const toggleCheckbox = (productId) =>
     setSelectedProductIds((prev) =>
       prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]
     );
-
   const toggleAllCheckboxes = () => {
     const currentIds = currentItems.map((p) => p._id);
     const allSelected = currentIds.every((id) => selectedProductIds.includes(id));
@@ -68,7 +59,6 @@ const ManageProduct = () => {
       allSelected ? prev.filter((id) => !currentIds.includes(id)) : [...new Set([...prev, ...currentIds])]
     );
   };
-
   // Delete single
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -90,7 +80,6 @@ const ManageProduct = () => {
       }
     }
   };
-
   // Delete multiple
   const handleDeleteSelected = async () => {
     if (selectedProductIds.length === 0) {
@@ -117,13 +106,11 @@ const ManageProduct = () => {
       alert('Bulk delete failed: ' + err.message);
     }
   };
-
   // Edit product
   const handleEdit = (product) => {
     navigate('/newproduct', { state: { product } });
   };
-
-  // ✅ Toggle Enable/Disable
+  //  Toggle Enable/Disable
   const handleToggleEnable = async (productId) => {
     try {
       const res = await fetch(`http://localhost:5000/api/products/${productId}/toggle`, {
@@ -140,8 +127,6 @@ const ManageProduct = () => {
       alert('Toggle failed: ' + err.message);
     }
   };
-
-
   // Export CSV
   const exportToCSV = () => {
     const selectedProducts = productData.filter((p) => selectedProductIds.includes(p._id));
@@ -152,8 +137,8 @@ const ManageProduct = () => {
     const headers = ['Name', 'Category', 'Subcategory', 'Price', 'OfferPrice'];
     const rows = selectedProducts.map((p) => [
       p.name,
-        p.category,
-  p.subcategory,
+      p.category,
+      p.subcategory,
       p.wieght,
       p.price,
       p.offerPrice ?? '',
@@ -163,7 +148,6 @@ const ManageProduct = () => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'products.csv');
   };
-
   // Export Excel
   const exportToExcel = () => {
     const selectedProducts = productData.filter((p) => selectedProductIds.includes(p._id));
@@ -175,18 +159,17 @@ const ManageProduct = () => {
       selectedProducts.map((p) => ({
         Name: p.name,
         Category: p.category,
-    Subcategory: p.subcategory,
-        Weight:p.weight,
+        Subcategory: p.subcategory,
+        Weight: p.weight,
         Price: p.price,
         OfferPrice: p.offerPrice ?? '',
-        Images:p.images
+        Images: p.images
       }))
     );
     const wb = XLSXUtils.book_new();
     XLSXUtils.book_append_sheet(wb, ws, 'Products');
     writeFile(wb, 'products.xlsx');
   };
-
   // Export PDF
   const exportToPDF = () => {
     const selectedProducts = productData.filter((p) => selectedProductIds.includes(p._id));
@@ -199,8 +182,8 @@ const ManageProduct = () => {
       head: [['Name', 'Category', 'Subcategory', 'Price', 'OfferPrice']],
       body: selectedProducts.map((p) => [
         p.name,
-     p.category,
-    p.subcategory,
+        p.category,
+        p.subcategory,
         p.weight,
         p.price,
         p.offerPrice ?? '',
@@ -209,7 +192,6 @@ const ManageProduct = () => {
     });
     doc.save('products.pdf');
   };
-
   return (
     <>
       <AdminHeader />
@@ -218,7 +200,6 @@ const ManageProduct = () => {
         <div className="customerheader">
           <h3 className="cush3">Manage Products</h3>
         </div>
-
         {/* Controls */}
         <div className="d-flex customer-table1 justify-content-between align-items-center">
           <div>
@@ -237,7 +218,6 @@ const ManageProduct = () => {
             </select>{' '}
             entries
           </div>
-
           <div>
             Search:{' '}
             <input
@@ -251,7 +231,6 @@ const ManageProduct = () => {
               placeholder="Search products..."
             />
           </div>
-
           <div>
             <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}>
               <FaFileCsv />
@@ -267,15 +246,13 @@ const ManageProduct = () => {
             </button>
           </div>
         </div>
-
         {/* Error */}
         {fetchError && <div className="alert alert-danger mt-3">Error fetching products: {fetchError}</div>}
-
         {/* Table */}
         <div className="customer-table2 mb-3">
           <table className="table table-bordered table-hover">
             <thead className="thead-light">
-              <tr style={{textAlign:"center"}} >
+              <tr style={{ textAlign: "center" }} >
                 <th>
                   <input
                     type="checkbox"
@@ -290,9 +267,9 @@ const ManageProduct = () => {
                 <th>Subcategory</th>
                 <th>Name</th>
                 <th>Description</th>
-                 <th>Weight</th>
+                <th>Weight</th>
                 <th>Price</th>
-               <th style={{ whiteSpace: 'nowrap' }}>Offer Price</th>
+                <th style={{ whiteSpace: 'nowrap' }}>Offer Price</th>
                 <th>Images</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -305,53 +282,53 @@ const ManageProduct = () => {
                 </tr>
               ) : (
                 currentItems.map((p) => (
-<tr key={p._id} style={{textAlign:"center"}} >
-  <td>
-    <input
-      type="checkbox"
-      checked={selectedProductIds.includes(p._id)}
-      onChange={() => toggleCheckbox(p._id)}
-    />
-  </td>
-  <td className="truncate-text">{p.category?.category || '-'}</td>
-  <td className="truncate-text">{p.subcategory || '-'}</td>
-  <td className="truncate-text">{p.name}</td>
-  <td className="truncate-text">{p.desc}</td>
-  <td className="truncate-text1">{p.weight}</td>
-  <td>{p.price}</td>
-  <td>{p.offerPrice ?? '-'}</td>
-  <td>
-    {p.images && p.images.length > 0 ? (
-      <img
-        src={p.images[0].startsWith('http') ? p.images[0] : `http://localhost:5000${p.images[0]}`}
-        alt="product"
-        style={{ width: '50px', height: 'auto', borderRadius: '5px', objectFit: 'cover' }}
-      />
-    ) : (
-      <span style={{ color: 'gray' }}>No image</span>
-    )}
-  </td>
-  <td>
-    <div
-      className={`toggle-switch ${p.enabled ? "enabled" : "disabled"}`}
-      onClick={() => handleToggleEnable(p._id)}
-    >
-      <div className="toggle-circle"></div>
-    </div>
-  </td>
-  <td >
-    <div style={{ display: 'flex', gap: '5px' }}>
-      <button className="btn btn-sm btn-success" onClick={() => handleEdit(p)}><FaEdit /></button>
-      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p._id)}><FaTrash /> </button>
-    </div>
-  </td>
-</tr> 
-))
+                  <tr key={p._id} style={{ textAlign: "center" }} >
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedProductIds.includes(p._id)}
+                        onChange={() => toggleCheckbox(p._id)}
+                      />
+                    </td>
+                    <td className="truncate-text">{p.category?.category || '-'}</td>
+                    <td className="truncate-text">{p.subcategory || '-'}</td>
+                    <td className="truncate-text">{p.name}</td>
+                    <td className="truncate-text">{p.desc}</td>
+                    <td className="truncate-text1">{p.weight}</td>
+                    <td>{p.price}</td>
+                    <td>{p.offerPrice ?? '-'}</td>
+                    <td>
+                      {p.images && p.images.length > 0 ? (
+                        <img
+                          src={p.images[0].startsWith('http') ? p.images[0] : `http://localhost:5000${p.images[0]}`}
+                          alt="product"
+                          style={{ width: '50px', height: 'auto', borderRadius: '5px', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <span style={{ color: 'gray' }}>No image</span>
+                      )}
+                    </td>
+                    <td>
+                      <div
+                        className={`toggle-switch ${p.enabled ? "enabled" : "disabled"}`}
+                        onClick={() => handleToggleEnable(p._id)}
+                      >
+                        <div className="toggle-circle"></div>
+                      </div>
+                    </td>
+                    <td >
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        <button className="btn btn-sm btn-success" onClick={() => handleEdit(p)}><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p._id)}><FaTrash /> </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
-  {/* Pagination */}
+        {/* Pagination */}
         <ul className="pagination justify-content-end" style={{ cursor: 'pointer' }}>
           <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
             <button
@@ -381,7 +358,6 @@ const ManageProduct = () => {
     </>
   );
 };
-
 export default ManageProduct;
 
 

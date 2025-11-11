@@ -31,12 +31,27 @@
   border-radius: 10px;
 }
 
-.besttextf3 {
+/* .besttextf3 {
   font-size: 16px;
   line-height: 22.4px;
   color: #0d0d0e;
   margin-top: 10px;
   font-weight: bold;
+  ove
+} */
+.besttextf3 {
+  font-size: 14px;
+  line-height: 22.4px;
+  color: #0d0d0e;
+  margin-top: 10px;
+  font-weight: bold;
+
+  /* 👇 Add these for ellipsis effect */
+  white-space: nowrap;       /* Keep text on one line */
+  overflow: hidden;          /* Hide overflowed text */
+  text-overflow: ellipsis;   /* Show “...” when text is cut */
+  display: block;            /* Ensure proper layout behavior */
+  width: 90%;               /* Optional: or a fixed width like 200px */
 }
 
 .carousel-wrapper {

@@ -176,23 +176,58 @@ const Account = () => {
   const storedUser = localStorage.getItem("user");
   const user = storedUser ? JSON.parse(storedUser) : {};
 
-  // ✅ Fetch user orders
-  const fetchOrders = async () => {
-    if (user?.email) {
-      try {
-        const response = await fetch(`http://localhost:5000/api/orders/${user.email}`);
-        const data = await response.json();
+  // // ✅ Fetch user orders
+  // const fetchOrders = async () => {
+  //   if (user?.email) {
+  //     try {
+  //       const response = await fetch(`http://localhost:5000/api/orders/${user.email}`);
+  //       const data = await response.json();
 
-        if (data.success && Array.isArray(data.orders)) {
-          setOrderHistory(data.orders);
-        } else {
-          setOrderHistory([]);
-        }
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
+  //       if (data.success && Array.isArray(data.orders)) {
+  //         setOrderHistory(data.orders);
+  //       } else {
+  //         setOrderHistory([]);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to fetch orders:", err);
+  //     }
+  //   }
+  // };
+
+  const fetchOrders = async () => {
+  if (user?.email) {
+    try {
+      const response = await fetch(`http://localhost:5000/api/orders/${user.email}`);
+      const data = await response.json();
+
+      if (data.success && Array.isArray(data.orders)) {
+        // 🕒 Auto-update local order status to "Delivered" if 40+ mins have passed
+        const updatedOrders = data.orders.map((order) => {
+          if (
+            order.status !== "Delivered" &&
+            order.status !== "Cancelled" &&
+            order.createdAt
+          ) {
+            const created = new Date(order.createdAt);
+            const now = new Date();
+            const diffMins = Math.floor((now - created) / 60000);
+            if (diffMins >= 40) {
+              return { ...order, status: "Delivered" };
+            }
+          }
+          return order;
+        });
+
+        setOrderHistory(updatedOrders);
+      } else {
+        setOrderHistory([]);
       }
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
     }
-  };
+  }
+};
+
 
   // ✅ Initial + Auto-refresh fetch
   useEffect(() => {

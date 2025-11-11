@@ -9,8 +9,6 @@ const fs = require('fs');
 const Product = require('./models/Product');    
 const Category = require('./models/category');   // Categories
 const Banner   =require('./models/banner')              // banner
-const Flavour = require('./models/flavour');            //flavour
-const Bestseller=require('./models/bestseller')         //bestseller
 const CustomerSay=require('./models/customersay')       //customersay
 const Premiumfood=require('./models/premiumfood')       //premiumfood
 const Customer=require('./models/customer')
@@ -543,26 +541,7 @@ app.get('/api/customersay', async (req, res) => {
   }
 });
 
-// GET all flavours
-app.get('/api/flavours', async (req, res) => {
-  try {
-    const flavours = await Flavour.find(); 
-    res.json(flavours);
-  } catch (err) {
-    console.error('Error fetching flavours:', err);
-    res.status(500).json({ message: 'Failed to fetch flavours' });
-  }
-});
-// GET all bestseller
-app.get('/api/bestseller', async (req, res) => {
-  try {
-    const bestseller = await Bestseller.find(); 
-    res.json(bestseller);
-  } catch (err) {
-    console.error('Error fetching bestsellers:', err);
-    res.status(500).json({ message: 'Failed to fetch bestsellers' });
-  }
-});
+
 // GET all premiumfood
 app.get('/api/premiumfood', async (req, res) => {
   try {

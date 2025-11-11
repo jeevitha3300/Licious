@@ -5,19 +5,17 @@ import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 import Alert from "react-bootstrap/Alert";
 import "./newbanner.css";
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const VALID_SIZES = [
-  { w: 1080, h: 48  },
-  { w: 2160, h: 96  },
+  { w: 1080, h: 48 },
+  { w: 2160, h: 96 },
   { w: 2160, h: 480 },
-  { w: 2250 ,h: 100 },
+  { w: 2250, h: 100 },
   { w: 2880, h: 640 },
   { w: 3240, h: 144 },
-  { w: 4500 ,h: 200 },
+  { w: 4500, h: 200 },
 ];
 const TOLERANCE = 10;
-
 const NewBanner = () => {
   const [message, setMessage] = useState("");
   const [imageName, setImageName] = useState("");
@@ -28,14 +26,12 @@ const NewBanner = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const editBanner = location.state?.banner;
-
   useEffect(() => {
     if (editBanner) {
       setImageName(editBanner.name);
       setBannerType(editBanner.type);
     }
   }, [editBanner]);
-
   // ---------------- validation ----------------
   const validate = () => {
     const newErrors = {};
@@ -43,7 +39,6 @@ const NewBanner = () => {
     if (!bannerType) newErrors.bannerType = "Please select banner type.";
     if (!editBanner && !imageFile)
       newErrors.imageFile = "Please upload a banner image.";
-
     if (imageFile) {
       if (!imageFile.type.startsWith("image/"))
         newErrors.imageFile = "Please upload a valid image.";
@@ -53,7 +48,6 @@ const NewBanner = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   // ---------------- image change ----------------
   const handleImageChange = (file) => {
     if (!file) return;
@@ -66,7 +60,6 @@ const NewBanner = () => {
       setImageFile(null);
       return;
     }
-
     if (!file.type.startsWith("image/")) {
       setErrors((prev) => ({
         ...prev,
@@ -75,19 +68,16 @@ const NewBanner = () => {
       setImageFile(null);
       return;
     }
-
     const img = new Image();
     img.src = URL.createObjectURL(file);
     img.onload = () => {
       const width = img.width;
       const height = img.height;
-
       const isValid = VALID_SIZES.some(
         (s) =>
           Math.abs(width - s.w) <= TOLERANCE &&
           Math.abs(height - s.h) <= TOLERANCE
       );
-
       if (!isValid) {
         setErrors((prev) => ({
           ...prev,
@@ -105,18 +95,15 @@ const NewBanner = () => {
       URL.revokeObjectURL(img.src);
     };
   };
-
   // ---------------- submit ----------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
     try {
       let formData = {
         name: imageName,
         type: bannerType,
       };
-
       // If new image uploaded
       if (imageFile) {
         const reader = new FileReader();
@@ -129,7 +116,6 @@ const NewBanner = () => {
         // keep old image if editing and no new image chosen
         formData.image = editBanner.image;
       }
-
       let res;
       if (editBanner?._id) {
         // Editing existing banner
@@ -146,21 +132,18 @@ const NewBanner = () => {
           body: JSON.stringify(formData),
         });
       }
-
       if (!res.ok) throw new Error("Failed to save banner");
       const data = await res.json();
       console.log("Banner saved:", data);
-
       setMessage(editBanner ? "Banner updated successfully!" : "Banner created successfully!");
       fetchBanners();
-
       if (editBanner) {
-        // ✅ After update → redirect
+        // After update → redirect
         setTimeout(() => {
           navigate("/managebanner");
         }, 1500);
       } else {
-        // ✅ After create → reset form
+        // After create → reset form
         setImageName("");
         setBannerType("");
         setImageFile(null);
@@ -172,7 +155,6 @@ const NewBanner = () => {
       console.error("Error submitting form:", err);
     }
   };
-
   return (
     <>
       <AdminHeader />
@@ -183,7 +165,6 @@ const NewBanner = () => {
             {editBanner ? "Edit Banner" : "New Banner"}
           </h3>
         </div>
-
         <div className="banner-form-container">
           {message && (
             <Alert
@@ -194,7 +175,6 @@ const NewBanner = () => {
               {message}
             </Alert>
           )}
-
           <div className="form-box">
             <h3>{editBanner ? "Update Banner" : "Add Banner"}</h3>
             <form onSubmit={handleSubmit}>
@@ -213,12 +193,11 @@ const NewBanner = () => {
                     <small className="error-text">{errors.imageName}</small>
                   )}
                 </div>
-
                 {/* Banner Type */}
                 <div className="form-group mt-2">
                   <label>Banner Type</label>
                   <select
-                  style={{padding:"2.5%"}}
+                    style={{ padding: "2.5%" }}
                     className={`bannerselect ${errors.bannerType ? "input-error" : ""}`}
                     value={bannerType}
                     onChange={(e) => setBannerType(e.target.value)}
@@ -231,9 +210,9 @@ const NewBanner = () => {
                     <small className="error-text">{errors.bannerType}</small>
                   )}
                 </div>
- </div>
-                {/* Image Upload */}
-                    <div className="form-row">
+              </div>
+              {/* Image Upload */}
+              <div className="form-row">
                 <div className="form-group">
                   <label>
                     {editBanner
@@ -244,7 +223,7 @@ const NewBanner = () => {
                     id="bannerFileInput"
                     className={`bannerimage ${errors.imageFile ? "input-error" : ""}`}
                     type="file"
-                    style={{width:"49%",padding:"1%"}}
+                    style={{ width: "49%", padding: "1%" }}
                     accept="image/*"
                     onChange={(e) => handleImageChange(e.target.files[0])}
                   />
@@ -252,8 +231,7 @@ const NewBanner = () => {
                     <small className="error-text">{errors.imageFile}</small>
                   )}
                 </div>
-             </div>
-
+              </div>
               {/* Current Image Preview in Edit */}
               {editBanner && !imageFile && (
                 <div className="mt-3">
@@ -265,7 +243,6 @@ const NewBanner = () => {
                   />
                 </div>
               )}
-
               <div className="form-buttons">
                 <button
                   type="button"
@@ -292,7 +269,6 @@ const NewBanner = () => {
           </div>
         </div>
       </div>
-
       <style>{`
         .input-error { border-color: red; }
         .error-text { color: red; font-size: 0.85em; margin-top: 4px; display: block; }
@@ -300,7 +276,6 @@ const NewBanner = () => {
     </>
   );
 };
-
 export default NewBanner;
 
 

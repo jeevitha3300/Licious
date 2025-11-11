@@ -4,12 +4,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
 import Alert from 'react-bootstrap/Alert';
-
 const Newuser = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const editingUser = location.state?.user;
-
   const initialFormState = {
     name: "",
     email: "",
@@ -29,7 +27,6 @@ const Newuser = () => {
       Setting: false,
     },
   };
-
   const [form, setForm] = useState(() => {
     if (editingUser) {
       return {
@@ -44,10 +41,8 @@ const Newuser = () => {
     }
     return initialFormState;
   });
-
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
-
   useEffect(() => {
     if (editingUser) {
       setForm({
@@ -61,51 +56,40 @@ const Newuser = () => {
       });
     }
   }, [editingUser]);
-
   const validateForm = () => {
     const newErrors = {};
-
     if (!form.name.trim()) newErrors.name = "Name is required";
     else if (form.name.trim().length < 3)
       newErrors.name = "Name must be at least 3 characters";
-
     if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(form.email.trim()))
       newErrors.email = "Enter a valid email address";
-
     if (!form.contact.trim()) newErrors.contact = "Contact number is required";
     else if (!/^\d{10}$/.test(form.contact.trim()))
       newErrors.contact = "Contact must be a 10-digit number";
-
     if (!form.designation.trim())
       newErrors.designation = "Designation is required";
-
     if (!editingUser || form.password || form.confirmPassword) {
       if (!form.password) newErrors.password = "Password is required";
       else if (form.password.length < 6)
         newErrors.password = "Password must be at least 6 characters";
-
       if (!form.confirmPassword)
         newErrors.confirmPassword = "Please confirm your password";
       else if (form.password !== form.confirmPassword)
         newErrors.confirmPassword = "Passwords do not match";
     }
-
     const isAnyPermissionSelected = Object.values(form.permissions).some(
       (val) => val === true
     );
     if (!isAnyPermissionSelected) {
       newErrors.permissions = "Please select at least one permission";
     }
-
     return newErrors;
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
     setForm((prev) => ({
@@ -116,52 +100,43 @@ const Newuser = () => {
       },
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage("");
     const validationErrors = validateForm();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
     let url = "http://localhost:5000/api/manageuser";
     let method = "POST";
-
     if (editingUser) {
       url = `http://localhost:5000/api/manageuser/${editingUser._id}`;
       method = "PUT";
     }
-
     const payload = { ...form };
     if (editingUser && (!form.password && !form.confirmPassword)) {
       delete payload.password;
       delete payload.confirmPassword;
     }
-
     try {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (response.ok) {
         setSuccessMessage(
           editingUser ? "User updated successfully!" : "User created successfully!"
         );
         setErrors({});
-
         if (!editingUser) {
           setForm(initialFormState);
         }
-
         setTimeout(() => {
           setSuccessMessage("");
           if (editingUser) {
-            navigate("/manageuser"); // ✅ redirect after update
+            navigate("/manageuser"); //redirect after update
           }
         }, 2000);
       } else {
@@ -172,19 +147,17 @@ const Newuser = () => {
       alert("Failed to submit form: " + error.message);
     }
   };
-
   const handleReset = () => {
     if (editingUser) {
-      // ✅ Edit mode → redirect back to table
+      // Edit mode → redirect back to table
       navigate("/manageuser");
     } else {
-      // ✅ Create mode → clear form
+      // Create mode → clear form
       setForm(initialFormState);
       setErrors({});
       setSuccessMessage("");
     }
   };
-
   return (
     <>
       <AdminHeader />
@@ -194,7 +167,7 @@ const Newuser = () => {
           <h3 className="newform">{editingUser ? "Edit User" : "New User"}</h3>
         </div>
         <div className="form-container">
-    {successMessage && (
+          {successMessage && (
             <Alert
               style={{ border: "none", fontSize: "18px" }}
               className="text-success text-end bg-white"
@@ -229,7 +202,6 @@ const Newuser = () => {
                 )}
               </div>
             </div>
-
             {/* Row 2 */}
             <div className="form-row">
               <div className="form-group">
@@ -243,7 +215,6 @@ const Newuser = () => {
                   <small className="error">{errors.contact}</small>
                 )}
               </div>
-
               <div className="form-group">
                 <label>Designation</label>
                 <input
@@ -256,7 +227,6 @@ const Newuser = () => {
                 )}
               </div>
             </div>
-
             {/* Permissions */}
             <div className="permissions-section">
               <label>Permissions</label>
@@ -278,7 +248,6 @@ const Newuser = () => {
                 <small className="error">{errors.permissions}</small>
               )}
             </div>
-
             {/* Passwords */}
             <div className="form-row">
               <div className="form-group">
@@ -293,7 +262,6 @@ const Newuser = () => {
                   <small className="error">{errors.password}</small>
                 )}
               </div>
-
               <div className="form-group">
                 <label>Confirm Password</label>
                 <input
@@ -307,7 +275,6 @@ const Newuser = () => {
                 )}
               </div>
             </div>
-
             {/* Actions */}
             <div className="form-actions">
               <button
@@ -327,5 +294,4 @@ const Newuser = () => {
     </>
   );
 };
-
 export default Newuser;
