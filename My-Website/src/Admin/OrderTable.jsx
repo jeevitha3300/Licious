@@ -26,7 +26,7 @@ const OrderTable = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showTracking, setShowTracking] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  // Fetch orders
+// Fetch orders
   const fetchOrders = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/orders");
@@ -39,7 +39,7 @@ const OrderTable = () => {
       setFetchError(err.message);
     }
   };
-  // Update status manually
+// Update status manually
   const updateStatus = async (id, status) => {
     try {
       const res = await fetch(`http://localhost:5000/api/orders/${id}/status`, {
@@ -57,19 +57,19 @@ const OrderTable = () => {
       console.error("Status update failed:", err);
     }
   };
-  //Initial fetch + auto refresh
+//Initial fetch + auto refresh
   useEffect(() => {
     fetchOrders();
     const interval = setInterval(fetchOrders, 30000);
     return () => clearInterval(interval);
   }, []);
-  // Update current time every minute
+// Update current time every minute
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
-  const safeOrderData = Array.isArray(orderData) ? orderData : [];
-  const filteredData = safeOrderData
+const safeOrderData = Array.isArray(orderData) ? orderData : [];
+const filteredData = safeOrderData
     .slice()
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .filter((order) =>
@@ -78,41 +78,41 @@ const OrderTable = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-  const indexOfLastItem = currentPage * entriesPerPage;
+const indexOfLastItem = currentPage * entriesPerPage;
   const indexOfFirstItem = indexOfLastItem - entriesPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-  // Delivery status fix (auto mark delivered after 40 min)
+// Delivery status fix (auto mark delivered after 40 min)
   const getDeliveryTimeStatus = (order) => {
     if (!order) return "Unknown";
-    // If backend already marked delivered/cancelled
+// If backend already marked delivered/cancelled
     if (order.status === "Delivered") return "Delivered";
     if (order.status === "Cancelled") return "Cancelled";
-    const created = new Date(order.createdAt);
-    const deliveryTime = new Date(created.getTime() + 40 * 60 * 1000);
+const created = new Date(order.createdAt);
+    const deliveryTime = new Date(created.getTime() + 15 * 60 * 1000);
     const diffMs = deliveryTime - currentTime;
-    if (diffMs <= 0) {
+ if (diffMs <= 0) {
       // Auto mark as delivered in UI (even if backend not updated)
       return "Delivered";
     }
-    const diffMins = Math.floor(diffMs / 60000);
+ const diffMins = Math.floor(diffMs / 60000);
     const hours = Math.floor(diffMins / 60);
     const mins = diffMins % 60;
     return hours > 0 ? `Arriving in ${hours}h ${mins}m` : `Arriving in ${mins}m`;
   };
-  //  Expand/collapse rows
+//  Expand/collapse rows
   const toggleExpand = (id) => {
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
     );
   };
-  //  Checkbox
+//  Checkbox
   const toggleCheckbox = (id) => {
     setSelectedOrderIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
-  const toggleAllCheckboxes = () => {
+const toggleAllCheckboxes = () => {
     const currentIds = currentItems.map((o) => o._id);
     const allSelected = currentIds.every((id) => selectedOrderIds.includes(id));
     if (allSelected) {
@@ -121,28 +121,28 @@ const OrderTable = () => {
       setSelectedOrderIds((prev) => [...new Set([...prev, ...currentIds])]);
     }
   };
-  // Tracking
+// Tracking
   const handleTrackOrder = (order) => {
     setSelectedOrder(order);
     setShowTracking(true);
   };
-  const closeTracking = () => {
+const closeTracking = () => {
     setShowTracking(false);
     setSelectedOrder(null);
   };
-  const getTrackingStep = (createdAt, status) => {
+ const getTrackingStep = (createdAt, status) => {
     if (status === "Cancelled") return -1;
     if (status === "Delivered") return 3;
-    const now = new Date();
+const now = new Date();
     const created = new Date(createdAt);
     const elapsedMins = Math.floor((now - created) / 60000);
-    if (elapsedMins < 15) return 0;
-    if (elapsedMins < 30) return 1;
-    if (elapsedMins < 60) return 2;
+    if (elapsedMins < 5) return 0;
+    if (elapsedMins < 15) return 1;
+    if (elapsedMins < 20) return 2;
     return 3;
   };
-  const trackingSteps = ["Order Placed", "Processing", "Shipped", "Delivered"];
-  // Delete order
+const trackingSteps = ["Order Placed", "Processing", "Shipped", "Delivered"];
+// Delete order
   const handleDelete = async (orderId) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
     try {
@@ -157,7 +157,7 @@ const OrderTable = () => {
       alert("Delete failed: " + err.message);
     }
   };
-  // Bulk delete
+// Bulk delete
   const handleDeleteSelected = async () => {
     if (selectedOrderIds.length === 0) return alert("No orders selected.");
     if (!window.confirm("Delete all selected orders?")) return;
@@ -174,11 +174,11 @@ const OrderTable = () => {
       alert("Bulk delete failed: " + err.message);
     }
   };
-  //  Export functions
+//  Export functions
   const selectedOrders = orderData.filter((r) =>
     selectedOrderIds.includes(r._id)
   );
-  const exportToCSV = () => {
+const exportToCSV = () => {
     if (selectedOrders.length === 0) return alert("Select at least one order.");
     const headers = [
       "User Email",
@@ -204,7 +204,7 @@ const OrderTable = () => {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "orders.csv");
   };
-  const exportToExcel = () => {
+const exportToExcel = () => {
     if (selectedOrders.length === 0) return alert("Select at least one order.");
     const ws = XLSXUtils.json_to_sheet(
       selectedOrders.map((order) => ({
@@ -222,7 +222,7 @@ const OrderTable = () => {
     XLSXUtils.book_append_sheet(wb, ws, "Orders");
     writeFile(wb, "orders.xlsx");
   };
-  const exportToPDF = () => {
+const exportToPDF = () => {
     if (selectedOrders.length === 0) return alert("Select at least one order.");
     const doc = new jsPDF();
     autoTable(doc, {
@@ -240,15 +240,15 @@ const OrderTable = () => {
     });
     doc.save("orders.pdf");
   };
-  return (
+return (
     <>
       <AdminHeader />
       <AdminSidebar />
-      <div className="customertable-container mb-2">
+<div className="customertable-container mb-2">
         <div className="customerheader">
           <h3 className="cush3">Order Details</h3>
         </div>
-        {/* Top Controls */}
+{/* Top Controls */}
         <div className="d-flex customer-table1 justify-content-between mt-4 align-items-center">
           <div>
             Show
@@ -267,7 +267,7 @@ const OrderTable = () => {
               ))}
             </select>
           </div>
-          <div>
+ <div>
             Search:
             <input
               type="text"
@@ -280,7 +280,7 @@ const OrderTable = () => {
               placeholder="Search orders..."
             />
           </div>
-          <div>
+ <div>
             <button className="btn btn-outline-secondary me-2" onClick={exportToCSV}>
               <FaFileCsv />
             </button>
@@ -295,10 +295,10 @@ const OrderTable = () => {
             </button>
           </div>
         </div>
-        {fetchError && (
+{fetchError && (
           <div className="alert alert-danger mt-3">Error fetching orders: {fetchError}</div>
         )}
-        {/* Orders Table */}
+{/* Orders Table */}
         <div className="customer-table2 mb-3">
           <table className="table table-bordered table-hover">
             <thead className="thead-light">
@@ -325,15 +325,15 @@ const OrderTable = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
+<tbody>
               {currentItems.map((order) => {
                 const deliveryStatus = getDeliveryTimeStatus(order);
                 const displayStatus =
                   order.status === "Cancelled"
                     ? "Cancelled"
                     : deliveryStatus === "Delivered"
-                      ? "Delivered"
-                      : order.status || "Pending";
+                    ? "Delivered"
+                    : order.status || "Pending";
 
                 return (
                   <React.Fragment key={order._id}>
@@ -365,20 +365,21 @@ const OrderTable = () => {
                       </td>
                       <td>{order.totalAmount}</td>
                       <td>{order.address?.city || "N/A"}</td>
-                      {/* Correct Status Display */}
+{/* Correct Status Display */}
                       <td>
                         <span
-                          className={`badge ${displayStatus === "Delivered"
+                          className={`badge ${
+                            displayStatus === "Delivered"
                               ? "bg-success"
                               : displayStatus === "Cancelled"
-                                ? "bg-danger"
-                                : "bg-warning text-dark"
-                            }`}
+                              ? "bg-danger"
+                              : "bg-warning text-dark"
+                          }`}
                         >
                           {displayStatus}
                         </span>
                       </td>
-                      {/* Delivery ETA */}
+{/* Delivery ETA */}
                       <td>
                         {displayStatus === "Cancelled" ? (
                           <span className="text-danger fw-semibold">
@@ -392,7 +393,7 @@ const OrderTable = () => {
                           deliveryStatus
                         )}
                       </td>
-                      <td>
+ <td>
                         <button
                           className="btn btn-sm btn-info"
                           onClick={() => handleTrackOrder(order)}
@@ -410,7 +411,7 @@ const OrderTable = () => {
                         </button>
                       </td>
                     </tr>
-                    {/* Expanded Items */}
+{/* Expanded Items */}
                     {expandedRows.includes(order._id) && (
                       <tr>
                         <td colSpan="11">
@@ -462,7 +463,7 @@ const OrderTable = () => {
             </tbody>
           </table>
         </div>
-        {/* Tracking Modal */}
+         {/* Tracking Modal */}
         {showTracking && selectedOrder && (
           <div className="tracking-modal">
             <div className="tracking-modal-content">
@@ -470,7 +471,7 @@ const OrderTable = () => {
                 Tracking Order:{" "}
                 <strong>{selectedOrder._id.slice(-6).toUpperCase()}</strong>
               </h5>
-              {selectedOrder.status === "Cancelled" ? (
+{selectedOrder.status === "Cancelled" ? (
                 <div className="text-center mt-3">
                   <span className="badge bg-danger fs-6 p-2">
                     Order Cancelled
@@ -483,7 +484,7 @@ const OrderTable = () => {
                       key={idx}
                       className={
                         idx <=
-                          getTrackingStep(selectedOrder.createdAt, selectedOrder.status)
+                        getTrackingStep(selectedOrder.createdAt, selectedOrder.status)
                           ? "active-step"
                           : ""
                       }
@@ -493,13 +494,13 @@ const OrderTable = () => {
                   ))}
                 </ul>
               )}
-              <button className="btn btn-secondary mt-3" onClick={closeTracking}>
+<button className="btn btn-secondary mt-3" onClick={closeTracking}>
                 Close
               </button>
             </div>
           </div>
         )}
-        {/* Pagination */}
+{/* Pagination */}
         <ul className="pagination justify-content-end" style={{ cursor: "pointer" }}>
           <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
             <button
@@ -515,7 +516,7 @@ const OrderTable = () => {
               Previous
             </button>
           </li>
-          {Array.from({ length: totalPages }, (_, i) => (
+ {Array.from({ length: totalPages }, (_, i) => (
             <li
               key={i}
               className={`mx-1 page-item ${currentPage === i + 1 ? "active" : ""}`}
@@ -533,7 +534,7 @@ const OrderTable = () => {
               </button>
             </li>
           ))}
-          <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+ <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
             <button
               className="page-link"
               onClick={() => setCurrentPage((p) => p + 1)}

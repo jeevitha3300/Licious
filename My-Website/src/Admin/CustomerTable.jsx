@@ -260,7 +260,6 @@ const CustomerTable = () => {
                     onChange={toggleAllCheckboxes}
                   />
                 </th>
-                <th>Sr No.</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Phone</th>
@@ -283,13 +282,11 @@ const CustomerTable = () => {
                         onChange={() => toggleCheckbox(customer._id)}
                       />
                     </td>
-                    <td>{filteredData.length - (indexOfFirstItem + idx)}</td>
                     <td>{customer.firstName}</td>
                     <td>{customer.lastName}</td>
                     <td>{customer.mobile}</td>
                     <td>{customer.email}</td>
                     <td>{customer.city}</td>
-                    {/* <td>{'*'.repeat(customer.password.length)}</td> */}
                     <td>
                       <input
                         type={passwordVisibility[customer._id] ? "text" : "password"}
